@@ -347,7 +347,7 @@ footer span{color:#b9e98a}
   
 <div class="mai
 
-<div id="authSection" class="panel" style="display:none;max-width:420px;margin:20px auto;padding:24px;">
+<div id="authSection" style="display:none;background:white;border:1px solid #d5e8df;border-radius:13px;max-width:420px;margin:20px auto;padding:24px;">
   <h2>🌿 VESTORA Account</h2>
   <p>Create an account or log in to continue.</p>
 
@@ -757,7 +757,7 @@ async function checkLoginSession() {
     console.error(error.message);
   }
 
-  if (data.session) {
+    if (data.session) {
     showLoggedInUser(data.session.user);
   } else {
     document.getElementById("authSection").style.display = "block";
