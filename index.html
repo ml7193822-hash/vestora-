@@ -1,217 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#064e3b">
-  <meta name="description" content="VESTORA — Investment opportunities and financial growth. Invest today, grow tomorrow.">
-  <title>VESTORA | Invest Today, Grow Tomorrow</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f3f7f4;
-      color: #17352b;
-    }
-    header {
-      background: linear-gradient(135deg, #064e3b, #166534);
-      color: white;
-      padding: 24px 16px;
-      text-align: center;
-    }
-    .logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 64px;
-      height: 64px;
-      border: 2px solid #e8c66a;
-      border-radius: 18px;
-      color: #f5d778;
-      font-size: 38px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-    header h1 {
-      margin: 0;
-      letter-spacing: 5px;
-      font-size: 32px;
-    }
-    header p { color: #f5d778; margin-bottom: 0; }
-    .hero {
-      text-align: center;
-      padding: 32px 18px 22px;
-    }
-    .hero h2 { font-size: 27px; margin-bottom: 10px; }
-    .hero p { color: #60756b; line-height: 1.6; }
-    .notice {
-      max-width: 680px;
-      margin: 0 auto 22px;
-      padding: 12px 16px;
-      background: #fff8df;
-      border: 1px solid #ead38b;
-      border-radius: 12px;
-      color: #604b13;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-    .packages {
-      max-width: 680px;
-      margin: auto;
-      padding: 0 16px 30px;
-      display: grid;
-      gap: 16px;
-    }
-    .card {
-      background: white;
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 5px 18px #183c2910;
-      border-left: 6px solid var(--accent);
-    }
-    .card-top {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .art {
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
-      display: grid;
-      place-items: center;
-      background: var(--pale);
-      color: var(--accent);
-      flex-shrink: 0;
-    }
-    .art svg { width: 42px; height: 42px; }
-    .card h3 { margin: 0 0 6px; font-size: 19px; }
-    .tag { color: var(--accent); font-size: 12px; font-weight: bold; }
-    .amount { font-size: 23px; font-weight: 800; margin: 18px 0 8px; }
-    .details { color: #65766d; font-size: 14px; line-height: 1.6; }
-    .btn {
-      display: block;
-      width: 100%;
-      border: 0;
-      border-radius: 11px;
-      background: var(--accent);
-      color: white;
-      font-weight: bold;
-      padding: 14px;
-      margin-top: 16px;
-      font-size: 15px;
-      cursor: pointer;
-    }
-    .blue { --accent:#2563eb; --pale:#dbeafe; }
-    .green { --accent:#15803d; --pale:#dcfce7; }
-    .purple { --accent:#7c3aed; --pale:#ede9fe; }
-    .gold { --accent:#a16207; --pale:#fef3c7; }
-    .diamond { --accent:#0e7490; --pale:#cffafe; }
-    .premium { --accent:#9f1239; --pale:#ffe4e6; }
-    footer {
-      background: #073b2d;
-      color: white;
-      text-align: center;
-      padding: 24px 16px;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-    footer span { color: #f5d778; }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="logo" aria-label="VESTORA logo">V</div>
-    <h1>VESTORA</h1>
-    <p>INVEST TODAY • GROW TOMORROW</p>
-  </header>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#064e3b">
+<meta name="description" content="VESTORA investment platform">
+<title>VESTORA — Invest Today, Grow Tomorrow</title>
 
-  <section class="hero">
-    <h2>Build Your Financial Future</h2>
-    <p>Explore our investment options and learn how each opportunity works.</p>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f0f7f4;color:#123b2d}
+button{cursor:pointer;font-weight:bold;border:0}
+header{background:linear-gradient(120deg,#003b2a,#087443);color:white;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:48px;height:48px;border:2px solid #f4cf5d;border-radius:14px;display:grid;place-items:center;color:#f4cf5d;font-size:32px;font-weight:900}
+.brand h1{margin:0;letter-spacing:3px;font-size:25px}
+.brand small{color:#f4cf5d;font-size:10px;letter-spacing:1px}
+.layout{display:flex;min-height:calc(100vh - 78px)}
+aside{background:#003d2d;color:white;width:190px;flex-shrink:0;padding:16px 10px}
+aside button{display:block;width:100%;text-align:left;padding:14px 12px;margin-bottom:6px;border-radius:10px;background:transparent;color:white;font-size:14px}
+aside button.active,aside button:hover{background:#07834e}
+main{padding:20px;min-width:0;flex:1;max-width:1400px;margin:auto}
+.welcome{background:linear-gradient(110deg,#003b29,#087747);color:white;padding:24px;border-radius:18px;position:relative;overflow:hidden}
+.welcome h2{margin:0 0 8px;font-size:25px}
+.welcome p{margin:0;color:#d8f5e4}
+.leaf{position:absolute;right:20px;top:15px;font-size:65px;opacity:.8}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0}
+.stat{padding:18px;border-radius:14px;color:white;background:linear-gradient(130deg,#07834d,#005b38)}
+.stat.gold{background:linear-gradient(130deg,#f3c84f,#b87900)}
+.stat.dark{background:linear-gradient(130deg,#075b4b,#003d31)}
+.stat small{display:block;margin-bottom:8px}
+.stat strong{font-size:clamp(15px,2vw,23px)}
+.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 26px}
+.quick button{padding:16px 5px;border-radius:12px;background:#087a49;color:white;font-size:14px}
+.quick button:nth-child(2){background:#1269d8}
+.quick button:nth-child(3){background:#6926c8}
+.quick button:nth-child(4){background:#078b9c}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.section-title h2{font-size:23px;margin:8px 0}
+.duration{background:#d9f3e5;color:#075b38;padding:9px 13px;border-radius:30px;font-size:12px;font-weight:bold}
+.products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:15px}
+.product{border-radius:17px;padding:18px;color:white;box-shadow:0 5px 15px #002b2518;position:relative;overflow:hidden}
+.product:after{content:"↗";position:absolute;right:12px;top:48px;font-size:55px;opacity:.18;font-weight:bold}
+.v1{background:linear-gradient(135deg,#087bfa,#003a9c)}
+.v2{background:linear-gradient(135deg,#12b84c,#005b2c)}
+.v3{background:linear-gradient(135deg,#982cff,#44008f)}
+.v4{background:linear-gradient(135deg,#f4a900,#864100)}
+.v5{background:linear-gradient(135deg,#08b8d0,#00506b)}
+.v6{background:linear-gradient(135deg,#f21d55,#850025)}
+.plan-name{font-size:19px;font-weight:bold;margin:5px 0}
+.plan-sub{font-size:12px;opacity:.9}
+.amount{font-size:23px;font-weight:800;margin:18px 0 12px}
+.detail{font-size:13px;margin:9px 0;position:relative;z-index:1}
+.invest{background:white;color:#123b2d;border-radius:30px;padding:12px;width:100%;margin-top:12px;position:relative;z-index:1}
+.notice{font-size:12px;line-height:1.6;color:#5c6e65;background:#fff9e8;border:1px solid #efdda6;border-radius:12px;padding:14px;margin:18px 0}
+.activity{background:white;border-radius:14px;padding:18px;margin-top:20px;box-shadow:0 3px 12px #123b2d0a}
+.activity h3{margin-top:0}
+footer{background:#003b2a;color:white;text-align:center;padding:22px;font-size:12px;line-height:1.8}
+footer span{color:#f4cf5d}
+@media(max-width:850px){
+ .layout{display:block}
+ aside{width:100%;display:flex;overflow-x:auto;padding:8px;gap:5px}
+ aside button{min-width:max-content;width:auto;margin:0;padding:12px}
+ main{padding:12px}
+ .products{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .leaf{font-size:45px}
+}
+@media(max-width:480px){
+ .brand h1{font-size:20px}
+ .brand small{font-size:8px}
+ .logo{width:40px;height:40px}
+ .stats{grid-template-columns:1fr}
+ .stat{padding:13px}
+ .quick{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .products{grid-template-columns:1fr}
+ .welcome{padding:20px}
+ .welcome h2{font-size:21px}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">V</div>
+    <div>
+      <h1>VESTORA</h1>
+      <small>INVEST TODAY • GROW TOMORROW</small>
+    </div>
+  </div>
+  <div>🌿 Welcome!</div>
+</header>
+
+<div class="layout">
+<aside>
+  <button class="active" onclick="go('dashboard')">⌂ Dashboard</button>
+  <button onclick="go('products')">📈 Invest</button>
+  <button onclick="go('deposit')">💳 Deposit</button>
+  <button onclick="go('withdraw')">↗ Withdraw</button>
+  <button onclick="go('history')">◷ History</button>
+  <button onclick="go('referrals')">♧ Referrals</button>
+  <button onclick="go('support')">☏ Support</button>
+</aside>
+
+<main id="dashboard">
+  <section class="welcome">
+    <div class="leaf">🌱</div>
+    <h2>Welcome to VESTORA</h2>
+    <p>Your journey toward financial growth starts here.</p>
   </section>
 
-  <div class="notice">
-    <strong>Important:</strong> These are sample package amounts for website design.
-    No investment returns are promised or guaranteed. Actual terms, risks, fees,
-    and eligibility must be disclosed and verified before accepting funds.
-  </div>
+  <section class="stats">
+    <div class="stat">
+      <small>💳 Account Balance</small>
+      <strong>UGX 0</strong>
+    </div>
+    <div class="stat gold">
+      <small>🎁 Welcome Bonus</small>
+      <strong>UGX 0</strong>
+    </div>
+    <div class="stat dark">
+      <small>📈 Total Earnings</small>
+      <strong>UGX 0</strong>
+    </div>
+  </section>
 
-  <main class="packages">
-    <article class="card blue">
-      <div class="card-top">
-        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="7" y="10" width="34" height="28" rx="5"/><path d="M14 29l7-8 6 5 8-10"/><path d="M29 16h6v6"/></svg></div>
-        <div><h3>Blue Starter</h3><div class="tag">START YOUR JOURNEY</div></div>
-      </div>
-      <div class="amount">UGX 10,000</div>
-      <div class="details">Sample entry amount. Review the investment terms, fees, and risks before proceeding.</div>
-      <button class="btn" onclick="showInfo('Blue Starter')">View Details</button>
-    </article>
+  <section class="quick">
+    <button onclick="go('deposit')">💳 Deposit</button>
+    <button onclick="go('withdraw')">↗ Withdraw</button>
+    <button onclick="go('products')">📈 Invest</button>
+    <button onclick="go('history')">◷ History</button>
+  </section>
 
-    <article class="card green">
-      <div class="card-top">
-        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M24 5l5 10 11 2-8 8 2 12-10-6-10 6 2-12-8-8 11-2z"/><path d="M17 25l5 5 10-11"/></svg></div>
-        <div><h3>Green Growth</h3><div class="tag">GROW WITH A PLAN</div></div>
-      </div>
-      <div class="amount">UGX 20,000</div>
-      <div class="details">Sample entry amount. Check how funds are used and how potential losses are handled.</div>
-      <button class="btn" onclick="showInfo('Green Growth')">View Details</button>
-    </article>
+  <section id="products">
+    <div class="section-title">
+      <h2>🌱 VESTORA Investment Plans</h2>
+      <span class="duration">All plans: 50 days</span>
+    </div>
+    <p>Explore V1 to V6 and review the terms before making a decision.</p>
 
-    <article class="card purple">
-      <div class="card-top">
-        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 38V24h8v14M20 38V15h8v23M32 38V7h8v31"/><path d="M6 41h36"/></svg></div>
-        <div><h3>Purple Plus</h3><div class="tag">PLAN YOUR NEXT STEP</div></div>
-      </div>
-      <div class="amount">UGX 50,000</div>
-      <div class="details">Sample entry amount. Request full documentation and independently assess the risks.</div>
-      <button class="btn" onclick="showInfo('Purple Plus')">View Details</button>
-    </article>
+    <div class="products">
+      <article class="product v1">
+        <div>🌿 VESTORA</div>
+        <div class="plan-name">VESTORA V1</div>
+        <div class="plan-sub">STARTER PLAN</div>
+        <div class="amount">UGX 20,000</div>
+        <div class="detail">◷ Daily target: UGX 5,000</div>
+        <div class="detail">▣ Duration: 50 days</div>
+        <button class="invest" onclick="details('V1','20,000','5,000','250,000')">View V1 Plan →</button>
+      </article>
 
-    <article class="card gold">
-      <div class="card-top">
-        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M24 5l5 12 13 1-10 9 3 13-11-7-11 7 3-13-10-9 13-1z"/></svg></div>
-        <div><h3>Gold Select</h3><div class="tag">A LONG-TERM VIEW</div></div>
-      </div>
-      <div class="amount">UGX 100,000</div>
-      <div class="details">Sample entry amount. Confirm the investment duration, withdrawal rules, and applicable charges.</div>
-      <button class="btn" onclick="showInfo('Gold Select')">View Details</button>
-    </article>
+      <article class="product v2">
+        <div>🌿 VESTORA</div>
+        <div class="plan-name">VESTORA V2</div>
+        <div class="plan-sub">GROWTH PLAN</div>
+        <div class="amount">UGX 50,000</div>
+        <div class="detail">◷ Daily target: UGX 11,000</div>
+        <div class="detail">▣ Duration: 50 days</div>
+        <button class="invest" onclick="details('V2','50,000','11,000','550,000')">View V2 Plan →</button>
+      </article>
 
-    <article class="card diamond">
-      <div class="card-top">
-        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 6h24l9 12-21 24L3 18z"/><path d="M3 18h42M12 6l6 12 6 24 6-24 6-12"/></svg></div>
-        <div><h3>Diamond Select</h3><div class="tag">REVIEW BEFORE INVESTING</div></div>
-      </div>
-      <div class="amount">UGX 500,000</div>
-      <div class="details">Sample entry amount. Consider whether the potential risk is suitable for your circumstances.</div>
-      <button class="btn" onclick="showInfo('Diamond Select')">View Details</button>
-    </article>
+      <article class="product v3">
+        <div>🌿 VESTORA</div>
+        <div class="plan-name">VESTORA V3</div>
+        <div class="plan-sub">PROGRESS PLAN</div>
+        <div class="amount">UGX 100,000</div>
+        <div class="detail">◷ Daily target: UGX 20,000</div>
+        <div class="detail">▣ Duration: 50 days</div>
+        <button class="invest" onclick="details('V3','100,000','20,000','1,000,000')">View V3 Plan →</button>
+      </article>
 
-    <article class="card premium">
-      <div class="card-top">
-        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M24 4l5 12 13 1-10 9 3 14-11-7-11 7 3-14-10-9 13-1z"/><circle cx="24" cy="25" r="5"/></svg></div>
-        <div><h3>Premium Reserve</h3><div class="tag">INFORMED DECISIONS FIRST</div></div>
-      </div>
-      <div class="amount">UGX 1,000,000</div>
-      <div class="details">Sample entry amount. Read all legal documents and verify the provider before committing funds.</div>
-      <button class="btn" onclick="showInfo('Premium Reserve')">View Details</button>
-    </article>
-  </main>
+      <article class="product v4">
+        <div>🌿 VESTORA</div>
+        <div class="plan-name">VESTORA V4</div>
+        <div class="plan-sub">PREMIUM PLAN</div>
+        <div class="amount">UGX 300,000</div>
+        <div class="detail">◷ Daily target: UGX 40,000</div>
+        <div class="detail">▣ Duration: 50 days</div>
+        <button class="invest" onclick="details('V4','300,000','40,000','2,000,000')">View V4 Plan →</button>
+      </article>
 
-  <footer>
-    <strong>VESTORA</strong><br>
-    <span>INVEST TODAY • GROW TOMORROW</span><br>
-    Investment involves risk. Returns are not guaranteed.<br>
-    © <span id="year"></span> VESTORA
-  </footer>
+      <article class="product v5">
+        <div>🌿 VESTORA</div>
+        <div class="plan-name">VESTORA V5</div>
+        <div class="plan-sub">ELITE PLAN</div>
+        <div class="amount">UGX 500,000</div>
+        <div class="detail">◷ Daily target: UGX 100,000</div>
+        <div class="detail">▣ Duration: 50 days</div>
+        <button class="invest" onclick="details('V5','500,000','100,000','5,000,000')">View V5 Plan →</button>
+      </article>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-    function showInfo(name) {
-      alert(name + "\\n\\nThis is a demonstration page. Investment terms and any application process must be verified and configured before this option can accept funds.");
-    }
-  </script>
+      <article class="product v6">
+        <div>🌿 VESTORA</div>
+        <div class="plan-name">VESTORA V6</div>
+        <div class="plan-sub">ROYAL PLAN</div>
+        <div class="amount">UGX 1,000,000</div>
+        <div class="detail">◷ Daily target: UGX 150,000</div>
+        <div class="detail">▣ Duration: 50 days</div>
+        <button class="invest" onclick="details('V6','1,000,000','150,000','7,500,000')">View V6 Plan →</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="notice">
+    <strong>Investment risk notice:</strong> Daily targets and 50-day totals shown here are illustrative figures, not guaranteed returns. Actual payouts depend on genuine business revenue and verified investment terms. The totals shown are daily targets multiplied by 50; they do not establish that the original capital is returned separately.
+  </section>
+
+  <section class="activity" id="activity">
+    <h3>◷ Recent Activity</h3>
+    <p>No transactions to display yet.</p>
+  </section>
+</main>
+</div>
+
+<footer>
+  <strong>VESTORA</strong><br>
+  <span>INVEST TODAY • GROW TOMORROW</span><br>
+  Investment involves risk. Please review all terms before investing.<br>
+  © 2026 VESTORA. All rights reserved.
+</footer>
+
+<script>
+function go(section){
+  if(section==='dashboard'||section==='products'){
+    const target=document.getElementById(section);
+    target.scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+  const messages={
+    deposit:'Deposit services have not been connected yet.',
+    withdraw:'Withdrawal services have not been connected yet.',
+    history:'Transaction history will appear here after a secure backend is connected.',
+    referrals:'Referral services have not been connected yet.',
+    support:'Please add your official customer support contact.'
+  };
+  alert(messages[section]||'Coming soon.');
+}
+function details(plan,amount,daily,total){
+  alert('VESTORA '+plan+
+  '\\nInvestment amount: UGX '+amount+
+  '\\nIllustrative daily target: UGX '+daily+
+  '\\n50-day target total: UGX '+total+
+  '\\n\\nThese figures are not guaranteed returns. This demo does not accept investments or process payments.');
+}
+</script>
 </body>
-</html>
+  </html>
