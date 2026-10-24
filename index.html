@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#064e3b">
+  <meta name="description" content="VESTORA — Investment opportunities and financial growth. Invest today, grow tomorrow.">
+  <title>VESTORA | Invest Today, Grow Tomorrow</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f7f4;
+      color: #17352b;
+    }
+    header {
+      background: linear-gradient(135deg, #064e3b, #166534);
+      color: white;
+      padding: 24px 16px;
+      text-align: center;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      border: 2px solid #e8c66a;
+      border-radius: 18px;
+      color: #f5d778;
+      font-size: 38px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    header h1 {
+      margin: 0;
+      letter-spacing: 5px;
+      font-size: 32px;
+    }
+    header p { color: #f5d778; margin-bottom: 0; }
+    .hero {
+      text-align: center;
+      padding: 32px 18px 22px;
+    }
+    .hero h2 { font-size: 27px; margin-bottom: 10px; }
+    .hero p { color: #60756b; line-height: 1.6; }
+    .notice {
+      max-width: 680px;
+      margin: 0 auto 22px;
+      padding: 12px 16px;
+      background: #fff8df;
+      border: 1px solid #ead38b;
+      border-radius: 12px;
+      color: #604b13;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .packages {
+      max-width: 680px;
+      margin: auto;
+      padding: 0 16px 30px;
+      display: grid;
+      gap: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 5px 18px #183c2910;
+      border-left: 6px solid var(--accent);
+    }
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .art {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--pale);
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .art svg { width: 42px; height: 42px; }
+    .card h3 { margin: 0 0 6px; font-size: 19px; }
+    .tag { color: var(--accent); font-size: 12px; font-weight: bold; }
+    .amount { font-size: 23px; font-weight: 800; margin: 18px 0 8px; }
+    .details { color: #65766d; font-size: 14px; line-height: 1.6; }
+    .btn {
+      display: block;
+      width: 100%;
+      border: 0;
+      border-radius: 11px;
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
+      padding: 14px;
+      margin-top: 16px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .blue { --accent:#2563eb; --pale:#dbeafe; }
+    .green { --accent:#15803d; --pale:#dcfce7; }
+    .purple { --accent:#7c3aed; --pale:#ede9fe; }
+    .gold { --accent:#a16207; --pale:#fef3c7; }
+    .diamond { --accent:#0e7490; --pale:#cffafe; }
+    .premium { --accent:#9f1239; --pale:#ffe4e6; }
+    footer {
+      background: #073b2d;
+      color: white;
+      text-align: center;
+      padding: 24px 16px;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    footer span { color: #f5d778; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" aria-label="VESTORA logo">V</div>
+    <h1>VESTORA</h1>
+    <p>INVEST TODAY • GROW TOMORROW</p>
+  </header>
+
+  <section class="hero">
+    <h2>Build Your Financial Future</h2>
+    <p>Explore our investment options and learn how each opportunity works.</p>
+  </section>
+
+  <div class="notice">
+    <strong>Important:</strong> These are sample package amounts for website design.
+    No investment returns are promised or guaranteed. Actual terms, risks, fees,
+    and eligibility must be disclosed and verified before accepting funds.
+  </div>
+
+  <main class="packages">
+    <article class="card blue">
+      <div class="card-top">
+        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="7" y="10" width="34" height="28" rx="5"/><path d="M14 29l7-8 6 5 8-10"/><path d="M29 16h6v6"/></svg></div>
+        <div><h3>Blue Starter</h3><div class="tag">START YOUR JOURNEY</div></div>
+      </div>
+      <div class="amount">UGX 10,000</div>
+      <div class="details">Sample entry amount. Review the investment terms, fees, and risks before proceeding.</div>
+      <button class="btn" onclick="showInfo('Blue Starter')">View Details</button>
+    </article>
+
+    <article class="card green">
+      <div class="card-top">
+        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M24 5l5 10 11 2-8 8 2 12-10-6-10 6 2-12-8-8 11-2z"/><path d="M17 25l5 5 10-11"/></svg></div>
+        <div><h3>Green Growth</h3><div class="tag">GROW WITH A PLAN</div></div>
+      </div>
+      <div class="amount">UGX 20,000</div>
+      <div class="details">Sample entry amount. Check how funds are used and how potential losses are handled.</div>
+      <button class="btn" onclick="showInfo('Green Growth')">View Details</button>
+    </article>
+
+    <article class="card purple">
+      <div class="card-top">
+        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 38V24h8v14M20 38V15h8v23M32 38V7h8v31"/><path d="M6 41h36"/></svg></div>
+        <div><h3>Purple Plus</h3><div class="tag">PLAN YOUR NEXT STEP</div></div>
+      </div>
+      <div class="amount">UGX 50,000</div>
+      <div class="details">Sample entry amount. Request full documentation and independently assess the risks.</div>
+      <button class="btn" onclick="showInfo('Purple Plus')">View Details</button>
+    </article>
+
+    <article class="card gold">
+      <div class="card-top">
+        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M24 5l5 12 13 1-10 9 3 13-11-7-11 7 3-13-10-9 13-1z"/></svg></div>
+        <div><h3>Gold Select</h3><div class="tag">A LONG-TERM VIEW</div></div>
+      </div>
+      <div class="amount">UGX 100,000</div>
+      <div class="details">Sample entry amount. Confirm the investment duration, withdrawal rules, and applicable charges.</div>
+      <button class="btn" onclick="showInfo('Gold Select')">View Details</button>
+    </article>
+
+    <article class="card diamond">
+      <div class="card-top">
+        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 6h24l9 12-21 24L3 18z"/><path d="M3 18h42M12 6l6 12 6 24 6-24 6-12"/></svg></div>
+        <div><h3>Diamond Select</h3><div class="tag">REVIEW BEFORE INVESTING</div></div>
+      </div>
+      <div class="amount">UGX 500,000</div>
+      <div class="details">Sample entry amount. Consider whether the potential risk is suitable for your circumstances.</div>
+      <button class="btn" onclick="showInfo('Diamond Select')">View Details</button>
+    </article>
+
+    <article class="card premium">
+      <div class="card-top">
+        <div class="art"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M24 4l5 12 13 1-10 9 3 14-11-7-11 7 3-14-10-9 13-1z"/><circle cx="24" cy="25" r="5"/></svg></div>
+        <div><h3>Premium Reserve</h3><div class="tag">INFORMED DECISIONS FIRST</div></div>
+      </div>
+      <div class="amount">UGX 1,000,000</div>
+      <div class="details">Sample entry amount. Read all legal documents and verify the provider before committing funds.</div>
+      <button class="btn" onclick="showInfo('Premium Reserve')">View Details</button>
+    </article>
+  </main>
+
+  <footer>
+    <strong>VESTORA</strong><br>
+    <span>INVEST TODAY • GROW TOMORROW</span><br>
+    Investment involves risk. Returns are not guaranteed.<br>
+    © <span id="year"></span> VESTORA
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    function showInfo(name) {
+      alert(name + "\\n\\nThis is a demonstration page. Investment terms and any application process must be verified and configured before this option can accept funds.");
+    }
+  </script>
+</body>
+</html>
