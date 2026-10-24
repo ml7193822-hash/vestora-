@@ -344,6 +344,28 @@ footer span{color:#b9e98a}
 
 <div class="main">
 <main>
+  
+<div class="main">
+<main>
+
+<div id="authSection" class="panel" style="display:none;max-width:420px;margin:20px auto;padding:24px;">
+  <h2>🌿 VESTORA Account</h2>
+  <p>Create an account or log in to continue.</p>
+
+  <form id="registerForm">
+    <input id="fullName" type="text" placeholder="Full name" required>
+    <input id="email" type="email" placeholder="Email address" required>
+    <input id="password" type="password" placeholder="Password (at least 6 characters)" minlength="6" required>
+    <button type="submit">Create Account</button>
+  </form>
+
+  <button type="button" onclick="loginUser()">Login</button>
+  <button type="button" onclick="resetPassword()">Forgot Password?</button>
+  <p id="authMessage"></p>
+</div>
+
+<div id="homeView">
+
 <div id="homeView">
   <section class="welcome" id="dashboard">
     <h2>Welcome back, <span id="welcomeName">Guest</span>!</h2>
