@@ -663,6 +663,111 @@ document.addEventListener('click',function(event){
     toggle.setAttribute('aria-expanded','false');
   }
 });
+  
+async function registerUser(event) {
+  if (event) event.preventDefault();
+
+  const fullName = document.getElementById("fullName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const message = document.getElementById("authMessage");
+
+  message.textContent = "Creating account...";
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name: fullName }
+    }
+  });
+
+  if (error) {
+    message.textContent = error.message;
+    return;
+  }
+
+  if (data.session) {
+    message.textContent = "Account created successfully!";
+    showLoggedInUser(data.user);
+  } else {
+    message.textContent =
+      "Account created. Check your email to confirm, then log in.";
+  }
+}
+
+async function loginUser() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const message = document.getElementById("authMessage");
+
+  message.textContent = "Logging in...";
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if (error) {
+    message.textContent = error.message;
+    return;
+  }
+
+  message.textContent = "Login successful!";
+  showLoggedInUser(data.user);
+}
+
+async function resetPassword() {
+  const email = document.getElementById("email").value.trim();
+  const message = document.getElementById("authMessage");
+
+  if (!email) {
+    message.textContent = "Enter your email address first.";
+    return;
+  }
+
+  const { error } =
+    await supabaseClient.auth.resetPasswordForEmail(email);
+
+  message.textContent = error
+    ? error.message
+    : "Check your email for the password reset link.";
+}
+
+function showLoggedInUser(user) {
+  const name =
+    user.user_metadata?.full_name || user.email || "User";
+
+  document.getElementById("userName").textContent = name;
+  document.getElementById("welcomeName").textContent = name;
+
+  document.getElementById("authSection").style.display = "none";
+  document.getElementById("homeView").style.display = "block";
+}
+
+document.getElementById("registerForm").addEventListener(
+  "submit",
+  registerUser
+);
+
+async function checkLoginSession() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    console.error(error.message);
+  }
+
+  if (data.session) {
+    showLoggedInUser(data.session.user);
+  } else {
+    document.getElementById("authSection").style.display = "block";
+    document.getElementById("homeView").style.display = "none";
+  }
+}
+
+checkLoginSession();
+
 </script>
 </body>
 </html>
