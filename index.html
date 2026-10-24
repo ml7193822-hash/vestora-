@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,72 +11,86 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f0f7f4;color:#123b2d}
+button,input{font:inherit}
 button{cursor:pointer;font-weight:bold;border:0}
-header{background:linear-gradient(120deg,#003b2a,#087443);color:white;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{width:48px;height:48px;border:2px solid #f4cf5d;border-radius:14px;display:grid;place-items:center;color:#f4cf5d;font-size:32px;font-weight:900}
-.brand h1{margin:0;letter-spacing:3px;font-size:25px}
-.brand small{color:#f4cf5d;font-size:10px;letter-spacing:1px}
-.layout{display:flex;min-height:calc(100vh - 78px)}
-aside{background:#003d2d;color:white;width:190px;flex-shrink:0;padding:16px 10px}
-aside button{display:block;width:100%;text-align:left;padding:14px 12px;margin-bottom:6px;border-radius:10px;background:transparent;color:white;font-size:14px}
-aside button.active,aside button:hover{background:#07834e}
-main{padding:20px;min-width:0;flex:1;max-width:1400px;margin:auto}
-.welcome{background:linear-gradient(110deg,#003b29,#087747);color:white;padding:24px;border-radius:18px;position:relative;overflow:hidden}
-.welcome h2{margin:0 0 8px;font-size:25px}
-.welcome p{margin:0;color:#d8f5e4}
-.leaf{position:absolute;right:20px;top:15px;font-size:65px;opacity:.8}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0}
-.stat{padding:18px;border-radius:14px;color:white;background:linear-gradient(130deg,#07834d,#005b38)}
+header{background:linear-gradient(120deg,#003b2a,#087443);color:white;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #003b2a25}
+.brand{display:flex;align-items:center;gap:9px}
+.logo{width:40px;height:40px;border:2px solid #f4cf5d;border-radius:12px;display:grid;place-items:center;color:#f4cf5d;font-size:27px;font-weight:900}
+.brand h1{margin:0;letter-spacing:2px;font-size:21px}
+.brand small{color:#f4cf5d;font-size:9px;letter-spacing:.6px}
+.menu-wrap{position:relative}
+.menu-toggle{background:#f4cf5d;color:#003b2a;border-radius:10px;padding:10px 12px;font-size:17px}
+.menu{display:none;position:absolute;right:0;top:48px;width:205px;background:white;color:#123b2d;border-radius:12px;padding:8px;box-shadow:0 8px 30px #0003;max-height:75vh;overflow:auto}
+.menu.open{display:block}
+.menu button{display:block;width:100%;text-align:left;background:white;color:#123b2d;padding:12px;border-radius:8px;font-size:14px}
+.menu button:hover{background:#e0f5e9}
+.layout{min-height:calc(100vh - 64px)}
+main{padding:15px;max-width:1100px;margin:auto}
+.welcome{background:linear-gradient(110deg,#003b29,#087747);color:white;padding:20px;border-radius:16px;position:relative;overflow:hidden}
+.welcome h2{margin:0 0 7px;font-size:23px}
+.welcome p{margin:0;color:#d8f5e4;font-size:14px;max-width:85%}
+.leaf{position:absolute;right:15px;top:12px;font-size:45px;opacity:.7}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+.stat{padding:13px;border-radius:12px;color:white;background:linear-gradient(130deg,#07834d,#005b38)}
 .stat.gold{background:linear-gradient(130deg,#f3c84f,#b87900)}
 .stat.dark{background:linear-gradient(130deg,#075b4b,#003d31)}
-.stat small{display:block;margin-bottom:8px}
-.stat strong{font-size:clamp(15px,2vw,23px)}
-.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 26px}
-.quick button{padding:16px 5px;border-radius:12px;background:#087a49;color:white;font-size:14px}
+.stat small{display:block;margin-bottom:6px;font-size:12px}
+.stat strong{font-size:clamp(13px,2vw,20px)}
+.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 20px}
+.quick button{padding:12px 4px;border-radius:10px;background:#087a49;color:white;font-size:13px}
 .quick button:nth-child(2){background:#1269d8}
 .quick button:nth-child(3){background:#6926c8}
 .quick button:nth-child(4){background:#078b9c}
-.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.section-title h2{font-size:23px;margin:8px 0}
-.duration{background:#d9f3e5;color:#075b38;padding:9px 13px;border-radius:30px;font-size:12px;font-weight:bold}
-.products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:15px}
-.product{border-radius:17px;padding:18px;color:white;box-shadow:0 5px 15px #002b2518;position:relative;overflow:hidden}
-.product:after{content:"↗";position:absolute;right:12px;top:48px;font-size:55px;opacity:.18;font-weight:bold}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.section-title h2{font-size:20px;margin:8px 0}
+.duration{background:#d9f3e5;color:#075b38;padding:7px 10px;border-radius:30px;font-size:11px;font-weight:bold}
+.products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.product{border-radius:13px;padding:12px;color:white;box-shadow:0 3px 12px #002b2518;position:relative;overflow:hidden;min-width:0}
+.product:after{content:"↗";position:absolute;right:9px;top:35px;font-size:37px;opacity:.15;font-weight:bold;pointer-events:none}
 .v1{background:linear-gradient(135deg,#087bfa,#003a9c)}
-.v2{background:linear-gradient(135deg,#12b84c,#005b2c)}
+.v2{background:linear-gradient(135deg,#12a94c,#005b2c)}
 .v3{background:linear-gradient(135deg,#982cff,#44008f)}
 .v4{background:linear-gradient(135deg,#f4a900,#864100)}
-.v5{background:linear-gradient(135deg,#08b8d0,#00506b)}
-.v6{background:linear-gradient(135deg,#f21d55,#850025)}
-.plan-name{font-size:19px;font-weight:bold;margin:5px 0}
-.plan-sub{font-size:12px;opacity:.9}
-.amount{font-size:23px;font-weight:800;margin:18px 0 12px}
-.detail{font-size:13px;margin:9px 0;position:relative;z-index:1}
-.invest{background:white;color:#123b2d;border-radius:30px;padding:12px;width:100%;margin-top:12px;position:relative;z-index:1}
-.notice{font-size:12px;line-height:1.6;color:#5c6e65;background:#fff9e8;border:1px solid #efdda6;border-radius:12px;padding:14px;margin:18px 0}
-.activity{background:white;border-radius:14px;padding:18px;margin-top:20px;box-shadow:0 3px 12px #123b2d0a}
-.activity h3{margin-top:0}
-footer{background:#003b2a;color:white;text-align:center;padding:22px;font-size:12px;line-height:1.8}
+.v5{background:linear-gradient(135deg,#08aabd,#00506b)}
+.v6{background:linear-gradient(135deg,#e51d50,#850025)}
+.plan-name{font-size:16px;font-weight:bold;margin:4px 0}
+.plan-sub{font-size:10px;opacity:.9}
+.amount{font-size:clamp(15px,2vw,21px);font-weight:800;margin:12px 0 8px;overflow-wrap:anywhere}
+.detail{font-size:11px;margin:7px 0;position:relative;z-index:1}
+.invest{background:white;color:#123b2d;border-radius:25px;padding:10px 5px;width:100%;margin-top:9px;font-size:13px;position:relative;z-index:1}
+.notice{font-size:12px;line-height:1.6;color:#5c6e65;background:#fff9e8;border:1px solid #efdda6;border-radius:11px;padding:12px;margin:15px 0}
+.activity,.panel{background:white;border-radius:13px;padding:16px;margin-top:15px;box-shadow:0 3px 12px #123b2d0a}
+.activity h3,.panel h2{margin-top:0}
+.panel{display:none}
+.panel.active{display:block}
+.panel p{line-height:1.6}
+.field{margin:13px 0}
+.field label{display:block;font-size:13px;font-weight:bold;margin-bottom:6px}
+.field input{width:100%;padding:12px;border:1px solid #c9d9d0;border-radius:9px;background:white;color:#123b2d}
+.primary{width:100%;padding:12px;border-radius:9px;background:#087443;color:white;margin-top:7px}
+.secondary{padding:10px 13px;border-radius:9px;background:#e0f5e9;color:#075b38;margin-top:8px}
+.result{font-size:13px;line-height:1.6;margin-top:12px;overflow-wrap:anywhere}
+.back{background:transparent;color:#087443;padding:8px 0}
+footer{background:#003b2a;color:white;text-align:center;padding:20px;font-size:12px;line-height:1.8}
 footer span{color:#f4cf5d}
-@media(max-width:850px){
- .layout{display:block}
- aside{width:100%;display:flex;overflow-x:auto;padding:8px;gap:5px}
- aside button{min-width:max-content;width:auto;margin:0;padding:12px}
- main{padding:12px}
- .products{grid-template-columns:repeat(2,minmax(0,1fr))}
- .leaf{font-size:45px}
+[hidden]{display:none!important}
+@media(max-width:650px){
+ main{padding:10px}
+ .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .product{padding:10px}
+ .stats{gap:6px}
+ .stat{padding:10px 7px}
+ .stat small{font-size:10px}
+ .welcome{padding:17px}
+ .welcome h2{font-size:20px}
+ .quick button{font-size:12px}
 }
-@media(max-width:480px){
- .brand h1{font-size:20px}
+@media(max-width:360px){
+ .brand h1{font-size:18px}
  .brand small{font-size:8px}
- .logo{width:40px;height:40px}
- .stats{grid-template-columns:1fr}
- .stat{padding:13px}
- .quick{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .logo{width:35px;height:35px}
  .products{grid-template-columns:1fr}
- .welcome{padding:20px}
- .welcome h2{font-size:21px}
+ .stats{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -89,126 +104,181 @@ footer span{color:#f4cf5d}
       <small>INVEST TODAY • GROW TOMORROW</small>
     </div>
   </div>
-  <div>🌿 Welcome!</div>
+
+  <div class="menu-wrap">
+    <button class="menu-toggle" id="menuToggle"
+      aria-label="Open dashboard menu" aria-expanded="false"
+      onclick="toggleMenu()">☰ Menu</button>
+    <nav class="menu" id="topMenu">
+      <button onclick="go('dashboard')">⌂ Dashboard</button>
+      <button onclick="go('products')">📈 Invest</button>
+      <button onclick="go('redeem')">🎟 Redeem Codes</button>
+      <button onclick="go('register')">👤 Register</button>
+      <button onclick="go('pro')">⭐ Pro Sign Up</button>
+      <button onclick="go('deposit')">💳 Deposit</button>
+      <button onclick="go('withdraw')">↗ Withdraw</button>
+      <button onclick="go('history')">◷ History</button>
+      <button onclick="go('referrals')">♧ Referrals</button>
+      <button onclick="go('support')">☏ Support</button>
+    </nav>
+  </div>
 </header>
 
 <div class="layout">
-<aside>
-  <button class="active" onclick="go('dashboard')">⌂ Dashboard</button>
-  <button onclick="go('products')">📈 Invest</button>
-  <button onclick="go('deposit')">💳 Deposit</button>
-  <button onclick="go('withdraw')">↗ Withdraw</button>
-  <button onclick="go('history')">◷ History</button>
-  <button onclick="go('referrals')">♧ Referrals</button>
-  <button onclick="go('support')">☏ Support</button>
-</aside>
+<main>
+  <div id="homeView">
+    <section class="welcome" id="dashboard">
+      <div class="leaf">🌱</div>
+      <h2>Welcome to VESTORA</h2>
+      <p>Your journey toward financial growth starts here.</p>
+    </section>
 
-<main id="dashboard">
-  <section class="welcome">
-    <div class="leaf">🌱</div>
-    <h2>Welcome to VESTORA</h2>
-    <p>Your journey toward financial growth starts here.</p>
+    <section class="stats">
+      <div class="stat">
+        <small>💳 Account Balance</small>
+        <strong>UGX 0</strong>
+      </div>
+      <div class="stat gold">
+        <small>🎁 Welcome Bonus</small>
+        <strong>UGX 0</strong>
+      </div>
+      <div class="stat dark">
+        <small>📈 Total Earnings</small>
+        <strong>UGX 0</strong>
+      </div>
+    </section>
+
+    <section class="quick">
+      <button onclick="go('deposit')">💳 Deposit</button>
+      <button onclick="go('withdraw')">↗ Withdraw</button>
+      <button onclick="go('products')">📈 Invest</button>
+      <button onclick="go('history')">◷ History</button>
+    </section>
+
+    <section id="products">
+      <div class="section-title">
+        <h2>🌱 Investment Packages</h2>
+        <span class="duration">V1 – V6</span>
+      </div>
+      <p style="font-size:13px">Choose a package to review its terms.</p>
+
+      <div class="products">
+        <article class="product v1">
+          <div>🌿 VESTORA</div>
+          <div class="plan-name">VESTORA V1</div>
+          <div class="plan-sub">STARTER PLAN</div>
+          <div class="amount">UGX 20,000</div>
+          <div class="detail">◷ Daily target: UGX 5,000</div>
+          <div class="detail">▣ Duration: 50 days</div>
+          <button class="invest" onclick="details('V1','20,000','5,000','250,000')">Invest →</button>
+        </article>
+
+        <article class="product v2">
+          <div>🌿 VESTORA</div>
+          <div class="plan-name">VESTORA V2</div>
+          <div class="plan-sub">GROWTH PLAN</div>
+          <div class="amount">UGX 50,000</div>
+          <div class="detail">◷ Daily target: UGX 11,000</div>
+          <div class="detail">▣ Duration: 50 days</div>
+          <button class="invest" onclick="details('V2','50,000','11,000','550,000')">Invest →</button>
+        </article>
+
+        <article class="product v3">
+          <div>🌿 VESTORA</div>
+          <div class="plan-name">VESTORA V3</div>
+          <div class="plan-sub">PROGRESS PLAN</div>
+          <div class="amount">UGX 100,000</div>
+          <div class="detail">◷ Daily target: UGX 20,000</div>
+          <div class="detail">▣ Duration: 50 days</div>
+          <button class="invest" onclick="details('V3','100,000','20,000','1,000,000')">Invest →</button>
+        </article>
+
+        <article class="product v4">
+          <div>🌿 VESTORA</div>
+          <div class="plan-name">VESTORA V4</div>
+          <div class="plan-sub">PREMIUM PLAN</div>
+          <div class="amount">UGX 300,000</div>
+          <div class="detail">◷ Daily target: UGX 40,000</div>
+          <div class="detail">▣ Duration: 50 days</div>
+          <button class="invest" onclick="details('V4','300,000','40,000','2,000,000')">Invest →</button>
+        </article>
+
+        <article class="product v5">
+          <div>🌿 VESTORA</div>
+          <div class="plan-name">VESTORA V5</div>
+          <div class="plan-sub">ELITE PLAN</div>
+          <div class="amount">UGX 500,000</div>
+          <div class="detail">◷ Daily target: UGX 100,000</div>
+          <div class="detail">▣ Duration: 50 days</div>
+          <button class="invest" onclick="details('V5','500,000','100,000','5,000,000')">Invest →</button>
+        </article>
+
+        <article class="product v6">
+          <div>🌿 VESTORA</div>
+          <div class="plan-name">VESTORA V6</div>
+          <div class="plan-sub">ROYAL PLAN</div>
+          <div class="amount">UGX 1,000,000</div>
+          <div class="detail">◷ Daily target: UGX 150,000</div>
+          <div class="detail">▣ Duration: 50 days</div>
+          <button class="invest" onclick="details('V6','1,000,000','150,000','7,500,000')">Invest →</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="notice">
+      <strong>Important:</strong> These daily figures are targets, not guaranteed returns. High returns involve substantial risk. Confirm the business model and legal requirements before accepting deposits. This demo does not accept investments or process payments.
+    </section>
+
+    <section class="activity">
+      <h3>◷ Recent Activity</h3>
+      <p>No transactions to display yet.</p>
+    </section>
+  </div>
+
+  <section class="panel" id="registerPanel">
+    <button class="back" onclick="go('dashboard')">← Back to dashboard</button>
+    <h2>👤 Create Your Account</h2>
+    <p>Register for VESTORA. Account creation will work after a secure authentication service is connected.</p>
+    <form onsubmit="demoForm(event,'registerResult','Registration is not connected yet. Your account has NOT been created. Connect a secure authentication backend first.')">
+      <div class="field"><label for="regName">Full name</label><input id="regName" autocomplete="name" required placeholder="Enter your full name"></div>
+      <div class="field"><label for="regEmail">Email address</label><input id="regEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div>
+      <div class="field"><label for="regPassword">Password</label><input id="regPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"></div>
+      <button class="primary" type="submit">Register</button>
+    </form>
+    <div class="result" id="registerResult" role="status"></div>
   </section>
 
-  <section class="stats">
-    <div class="stat">
-      <small>💳 Account Balance</small>
-      <strong>UGX 0</strong>
-    </div>
-    <div class="stat gold">
-      <small>🎁 Welcome Bonus</small>
-      <strong>UGX 0</strong>
-    </div>
-    <div class="stat dark">
-      <small>📈 Total Earnings</small>
-      <strong>UGX 0</strong>
-    </div>
+  <section class="panel" id="proPanel">
+    <button class="back" onclick="go('dashboard')">← Back to dashboard</button>
+    <h2>⭐ VESTORA Pro Sign Up</h2>
+    <p>Request Pro membership. The membership price, benefits and eligibility should be confirmed before payments are enabled.</p>
+    <form onsubmit="demoForm(event,'proResult','Pro sign-up is not connected yet. No membership was purchased or activated.')">
+      <div class="field"><label for="proName">Full name</label><input id="proName" required autocomplete="name" placeholder="Enter your name"></div>
+      <div class="field"><label for="proEmail">Email address</label><input id="proEmail" type="email" required autocomplete="email" placeholder="Enter your email"></div>
+      <button class="primary" type="submit">Request Pro Sign Up</button>
+    </form>
+    <div class="result" id="proResult" role="status"></div>
   </section>
 
-  <section class="quick">
-    <button onclick="go('deposit')">💳 Deposit</button>
-    <button onclick="go('withdraw')">↗ Withdraw</button>
-    <button onclick="go('products')">📈 Invest</button>
-    <button onclick="go('history')">◷ History</button>
+  <section class="panel" id="redeemPanel">
+    <button class="back" onclick="go('dashboard')">← Back to dashboard</button>
+    <h2>🎟 Redeem Code</h2>
+    <p>Enter a code supplied by VESTORA. Reward codes must be checked by a secure server before any reward is credited.</p>
+    <form onsubmit="redeemCode(event)">
+      <div class="field">
+        <label for="redeemInput">Your redeem code</label>
+        <input id="redeemInput" required maxlength="80" autocomplete="off" placeholder="Enter code here">
+      </div>
+      <button class="primary" type="submit">Check Code</button>
+    </form>
+    <div class="result" id="redeemResult" role="status"></div>
+    <p style="font-size:12px;color:#61746a">This demo does not issue rewards or change your balance. Code validation and one-time redemption require a secure backend.</p>
   </section>
 
-  <section id="products">
-    <div class="section-title">
-      <h2>🌱 VESTORA Investment Plans</h2>
-      <span class="duration">All plans: 50 days</span>
-    </div>
-    <p>Explore V1 to V6 and review the terms before making a decision.</p>
-
-    <div class="products">
-      <article class="product v1">
-        <div>🌿 VESTORA</div>
-        <div class="plan-name">VESTORA V1</div>
-        <div class="plan-sub">STARTER PLAN</div>
-        <div class="amount">UGX 20,000</div>
-        <div class="detail">◷ Daily target: UGX 5,000</div>
-        <div class="detail">▣ Duration: 50 days</div>
-        <button class="invest" onclick="details('V1','20,000','5,000','250,000')">View V1 Plan →</button>
-      </article>
-
-      <article class="product v2">
-        <div>🌿 VESTORA</div>
-        <div class="plan-name">VESTORA V2</div>
-        <div class="plan-sub">GROWTH PLAN</div>
-        <div class="amount">UGX 50,000</div>
-        <div class="detail">◷ Daily target: UGX 11,000</div>
-        <div class="detail">▣ Duration: 50 days</div>
-        <button class="invest" onclick="details('V2','50,000','11,000','550,000')">View V2 Plan →</button>
-      </article>
-
-      <article class="product v3">
-        <div>🌿 VESTORA</div>
-        <div class="plan-name">VESTORA V3</div>
-        <div class="plan-sub">PROGRESS PLAN</div>
-        <div class="amount">UGX 100,000</div>
-        <div class="detail">◷ Daily target: UGX 20,000</div>
-        <div class="detail">▣ Duration: 50 days</div>
-        <button class="invest" onclick="details('V3','100,000','20,000','1,000,000')">View V3 Plan →</button>
-      </article>
-
-      <article class="product v4">
-        <div>🌿 VESTORA</div>
-        <div class="plan-name">VESTORA V4</div>
-        <div class="plan-sub">PREMIUM PLAN</div>
-        <div class="amount">UGX 300,000</div>
-        <div class="detail">◷ Daily target: UGX 40,000</div>
-        <div class="detail">▣ Duration: 50 days</div>
-        <button class="invest" onclick="details('V4','300,000','40,000','2,000,000')">View V4 Plan →</button>
-      </article>
-
-      <article class="product v5">
-        <div>🌿 VESTORA</div>
-        <div class="plan-name">VESTORA V5</div>
-        <div class="plan-sub">ELITE PLAN</div>
-        <div class="amount">UGX 500,000</div>
-        <div class="detail">◷ Daily target: UGX 100,000</div>
-        <div class="detail">▣ Duration: 50 days</div>
-        <button class="invest" onclick="details('V5','500,000','100,000','5,000,000')">View V5 Plan →</button>
-      </article>
-
-      <article class="product v6">
-        <div>🌿 VESTORA</div>
-        <div class="plan-name">VESTORA V6</div>
-        <div class="plan-sub">ROYAL PLAN</div>
-        <div class="amount">UGX 1,000,000</div>
-        <div class="detail">◷ Daily target: UGX 150,000</div>
-        <div class="detail">▣ Duration: 50 days</div>
-        <button class="invest" onclick="details('V6','1,000,000','150,000','7,500,000')">View V6 Plan →</button>
-      </article>
-    </div>
-  </section>
-
-  <section class="notice">
-    <strong>Investment risk notice:</strong> Daily targets and 50-day totals shown here are illustrative figures, not guaranteed returns. Actual payouts depend on genuine business revenue and verified investment terms. The totals shown are daily targets multiplied by 50; they do not establish that the original capital is returned separately.
-  </section>
-
-  <section class="activity" id="activity">
-    <h3>◷ Recent Activity</h3>
-    <p>No transactions to display yet.</p>
+  <section class="panel" id="messagePanel">
+    <button class="back" onclick="go('dashboard')">← Back to dashboard</button>
+    <h2 id="messageTitle">VESTORA</h2>
+    <p id="messageText"></p>
   </section>
 </main>
 </div>
@@ -216,33 +286,100 @@ footer span{color:#f4cf5d}
 <footer>
   <strong>VESTORA</strong><br>
   <span>INVEST TODAY • GROW TOMORROW</span><br>
-  Investment involves risk. Please review all terms before investing.<br>
+  Investment involves risk. Review the terms before investing.<br>
   © 2026 VESTORA. All rights reserved.
 </footer>
 
 <script>
+function toggleMenu(){
+  const menu=document.getElementById('topMenu');
+  const btn=document.getElementById('menuToggle');
+  const open=menu.classList.toggle('open');
+  btn.setAttribute('aria-expanded',String(open));
+}
+
 function go(section){
+  document.getElementById('topMenu').classList.remove('open');
+  document.getElementById('menuToggle').setAttribute('aria-expanded','false');
+
+  const home=document.getElementById('homeView');
+  const panels=document.querySelectorAll('.panel');
+  panels.forEach(panel=>panel.classList.remove('active'));
+
   if(section==='dashboard'||section==='products'){
+    home.hidden=false;
     const target=document.getElementById(section);
     target.scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
-  const messages={
-    deposit:'Deposit services have not been connected yet.',
-    withdraw:'Withdrawal services have not been connected yet.',
-    history:'Transaction history will appear here after a secure backend is connected.',
-    referrals:'Referral services have not been connected yet.',
-    support:'Please add your official customer support contact.'
+
+  home.hidden=true;
+  const panelMap={
+    register:'registerPanel',
+    pro:'proPanel',
+    redeem:'redeemPanel'
   };
-  alert(messages[section]||'Coming soon.');
+
+  if(panelMap[section]){
+    document.getElementById(panelMap[section]).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+
+  const messages={
+    deposit:'Deposit services are not connected yet. No payment has been taken.',
+    withdraw:'Withdrawal services are not connected yet.',
+    history:'Transaction history will appear after a secure backend is connected.',
+    referrals:'Referral services are not connected yet.',
+    support:'Add your official customer support contact before publishing.'
+  };
+
+  document.getElementById('messageTitle').textContent=
+    section.charAt(0).toUpperCase()+section.slice(1);
+  document.getElementById('messageText').textContent=
+    messages[section]||'This feature is not available yet.';
+  document.getElementById('messagePanel').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
+
 function details(plan,amount,daily,total){
-  alert('VESTORA '+plan+
-  '\\nInvestment amount: UGX '+amount+
-  '\\nIllustrative daily target: UGX '+daily+
-  '\\n50-day target total: UGX '+total+
-  '\\n\\nThese figures are not guaranteed returns. This demo does not accept investments or process payments.');
+  const home=document.getElementById('homeView');
+  home.hidden=true;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById('messagePanel');
+  panel.classList.add('active');
+  document.getElementById('messageTitle').textContent='VESTORA '+plan+' — Invest';
+  document.getElementById('messageText').textContent=
+    'Package amount: UGX '+amount+
+    '. Illustrative daily target: UGX '+daily+
+    '. Illustrative 50-day total: UGX '+total+
+    '. These figures are not guaranteed returns. Investment processing is not connected, so no money has been taken and no investment has been created.';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
+
+function demoForm(event,resultId,message){
+  event.preventDefault();
+  document.getElementById(resultId).textContent=message;
+}
+
+function redeemCode(event){
+  event.preventDefault();
+  const code=document.getElementById('redeemInput').value.trim();
+  const result=document.getElementById('redeemResult');
+  if(!code){
+    result.textContent='Please enter a code.';
+    return;
+  }
+  result.textContent='Code received for demonstration only. It has NOT been validated or redeemed, and no reward or balance has changed. A secure backend is required to check the code.';
+}
+
+document.addEventListener('click',function(event){
+  const wrap=document.querySelector('.menu-wrap');
+  if(!wrap.contains(event.target)){
+    document.getElementById('topMenu').classList.remove('open');
+    document.getElementById('menuToggle').setAttribute('aria-expanded','false');
+  }
+});
 </script>
 </body>
-  </html>
+</html>
