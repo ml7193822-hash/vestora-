@@ -748,37 +748,34 @@ async function loadProfile() {
   document.getElementById("totalEarnings").textContent =
     "UGX " + balance.toLocaleString("en-UG");
 }
-async function purchaseProduct(productCode) {
-  if (!currentUser) {
-    alert("Please log in first.");
+
+async function loadProfile() {
+  if (!currentUser) return;
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("balance")
+    .eq("id", currentUser.id)
+    .single();
+
+  if (error) {
+    console.error("Could not load profile balance:", error);
     return;
   }
 
-  const confirmed = confirm(
-    "Do you want to purchase " + productCode +
-    "? The product price will be deducted from your balance."
-  );
+  const balance = Number(data.balance || 0);
 
-  if (!confirmed) return;
+  document.getElementById("accountBalance").textContent =
+    "UGX " + balance.toLocaleString("en-UG");
 
-  try {
-    const { data, error } = await supabaseClient.rpc(
-      "purchase_vestora_product",
-      { p_product_code: productCode }
-    );
+  document.getElementById("totalEarnings").textContent =
+    "UGX " + balance.toLocaleString("en-UG");
 
-    if (error) throw error;
-
-    alert(data || "Purchase successful!");
-
-    if (typeof loadProfile === "function") {
-      await loadProfile();
-    }
-  } catch (error) {
-    console.error("Purchase error:", error);
-    alert("Purchase failed: " + error.message);
+  if (typeof loadMyProducts === "function") {
+    await loadMyProducts();
   }
-  }
+}
+
   
 async function loadMyProducts() {
   const container = document.getElementById("myProductsList");
