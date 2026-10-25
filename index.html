@@ -431,8 +431,9 @@ function setSignedIn(user) {
   document.getElementById("welcomeName").textContent = name;
 
   authSection.hidden = true;
-  appView.hidden = false;
-  go("dashboard");
+appView.hidden = false;
+go("dashboard");
+loadProfile();
 }
 
 async function registerUser(event) {
@@ -713,6 +714,29 @@ result.textContent = error.message || "Unknown error";
     button.textContent = "Check Code";
   }
 });
+
+async function loadProfile() {
+  if (!currentUser) return;
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("balance")
+    .eq("id", currentUser.id)
+    .single();
+
+  if (error) {
+    console.error("Could not load profile balance:", error);
+    return;
+  }
+
+  const balance = Number(data.balance || 0);
+
+  document.getElementById("accountBalance").textContent =
+    "UGX " + balance.toLocaleString("en-UG");
+
+  document.getElementById("totalEarnings").textContent =
+    "UGX " + balance.toLocaleString("en-UG");
+}
 
 async function checkLoginSession() {
   showAuthMessage("Checking your account...");
