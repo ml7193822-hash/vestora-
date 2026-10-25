@@ -698,6 +698,7 @@ document.getElementById("redeemForm").addEventListener("submit", async function(
     }
   } catch (error) {
     console.error("Redeem error:", error);
+result.textContent = error.message || "Unknown error";
     result.textContent = "Unable to redeem the code. Please log in and try again.";
   } finally {
     button.disabled = false;
