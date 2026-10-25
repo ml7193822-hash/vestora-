@@ -817,44 +817,54 @@ const productPlans = {
   V6:{ amount:1000000, daily:220000, duration:90, total:20800000 }
 };
 
-function purchaseProduct(plan) {
-  if (!currentUser) return;
+
+async function purchaseProduct(plan) {
+  if (!currentUser) {
+    alert("Please log in first.");
+    return;
+  }
 
   const item = productPlans[plan];
-  if (!item) return;
 
-  document.getElementById("homeView").hidden = true;
-  document.getElementById("redeemPanel").classList.remove("active");
+  if (!item) {
+    alert("Product not found.");
+    return;
+  }
 
-  const panel = document.getElementById("messagePanel");
-  panel.classList.add("active");
+  const confirmed = confirm(
+    "Purchase VESTORA " + plan +
+    " for UGX " + item.amount.toLocaleString("en-UG") +
+    "?\n\nThis will deduct the purchase amount from your account balance."
+  );
 
-  document.getElementById("messageTitle").textContent =
-    "VESTORA " + plan + " — Package Details";
+  if (!confirmed) return;
 
-  document.getElementById("messageText").textContent =
-    "Capital: UGX " + item.amount.toLocaleString("en-UG") +
-    ". Illustrative daily target: UGX " + item.daily.toLocaleString("en-UG") +
-    ". Duration: " + item.duration + " days. Illustrative total target: UGX " +
-    item.total.toLocaleString("en-UG") +
-    ". These are not guaranteed returns. This page only displays package details; it does not purchase a product or take payment.";
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "purchase_vestora_product",
+      { p_product_code: plan }
+    );
 
-  const extra = document.getElementById("messageExtra");
-  extra.replaceChildren();
+    if (error) {
+      alert("Purchase failed: " + error.message);
+      return;
+    }
 
-  const note = document.createElement("div");
-  note.className = "notice";
-  note.textContent = "Review the risks, verify the business and its applicable legal requirements before investing.";
-  extra.appendChild(note);
+    alert(
+      typeof data === "string"
+        ? data
+        : "Purchase submitted successfully."
+    );
 
-  const back = document.createElement("button");
-  back.className = "primary";
-  back.textContent = "Back to Packages";
-  back.onclick = () => go("products");
-  extra.appendChild(back);
+    await loadProfile();
+    await loadMyProducts();
 
-  window.scrollTo({ top:0, behavior:"smooth" });
+    go("products");
+  } catch (err) {
+    alert("Purchase failed: " + err.message);
+  }
 }
+
 
 document.getElementById("registerForm")
   .addEventListener("submit", registerUser);
