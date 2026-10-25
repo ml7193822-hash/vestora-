@@ -661,25 +661,47 @@ function details(plan, amount, daily, duration, total) {
 
 document.getElementById("registerForm").addEventListener("submit", registerUser);
 
-document.getElementById("redeemForm").addEventListener("submit", function(event) {
+document.getElementById("redeemForm").addEventListener("submit", async function(event) {
   event.preventDefault();
-  const code = document.getElementById("redeemInput").value.trim();
+
+  const input = document.getElementById("redeemInput");
   const result = document.getElementById("redeemResult");
+  const button = this.querySelector('button[type="submit"]');
+  const code = input.value.trim().toUpperCase();
 
-  result.textContent = code
-    ? "Demo only: this code has NOT been validated or redeemed. No reward or balance has changed."
-    : "Please enter a code.";
-});
+  if (!code) {
+    result.textContent = "Please enter a code.";
+    return;
+  }
 
-document.addEventListener("click", function(event) {
-  const sidebar = document.getElementById("sidebar");
-  const toggle = document.getElementById("menuToggle");
+  button.disabled = true;
+  button.textContent = "Checking...";
+  result.textContent = "Validating your code...";
 
-  if (sidebar && toggle &&
-      !sidebar.contains(event.target) &&
-      !toggle.contains(event.target)) {
-    sidebar.classList.remove("open");
-    toggle.setAttribute("aria-expanded", "false");
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "redeem_vestora_code",
+      { p_code: code }
+    );
+
+    if (error) {
+      throw error;
+    }
+
+    result.textContent = data || "No response received.";
+    input.value = "";
+
+    if (String(data).toLowerCase().includes("success!")) {
+      if (typeof loadProfile === "function") {
+        await loadProfile();
+      }
+    }
+  } catch (error) {
+    console.error("Redeem error:", error);
+    result.textContent = "Unable to redeem the code. Please log in and try again.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Check Code";
   }
 });
 
