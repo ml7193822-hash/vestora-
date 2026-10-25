@@ -233,10 +233,21 @@ footer span{color:#b9e98a}
           <section class="welcome" id="dashboard">
             <h2>Welcome back, <span id="welcomeName">User</span>!</h2>
             <p>Your journey toward financial growth continues.</p>
+          
           </section>
 
-          
+          <section class="stats" id="myProductsSection">
+            <div class="stat">
+              <h3>📦 My Products</h3>
+              <p>View the products you have purchased.</p>
+              <div id="myProductsList">
+                <p>Loading your products...</p>
+              </div>
+            </div>
+          </section>
+
 <section class="stats">
+
   <div class="stat">
     <div class="stat-icon">▣</div>
     <div>
@@ -768,6 +779,50 @@ async function purchaseProduct(productCode) {
     alert("Purchase failed: " + error.message);
   }
   }
+  
+async function loadMyProducts() {
+  const container = document.getElementById("myProductsList");
+
+  if (!container) return;
+
+  if (!currentUser) {
+    container.innerHTML = "<p>Please log in to view your products.</p>";
+    return;
+  }
+
+  container.innerHTML = "<p>Loading your products...</p>";
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("product_purchases")
+      .select("id, product_id, amount_paid, status, purchased_at, products(product_code, product_name, daily_profit, duration_days)")
+      .eq("user_id", currentUser.id)
+      .order("purchased_at", { ascending: false });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      container.innerHTML = "<p>You have not purchased any products yet.</p>";
+      return;
+    }
+
+    container.innerHTML = data.map(item => {
+      const product = item.products || {};
+      return `
+        <div style="background:#f0fdf4;padding:14px;margin:10px 0;border-radius:10px;border:1px solid #bbf7d0;">
+          <h4 style="margin:0 0 8px;">${product.product_name || product.product_code || "VESTORA Product"}</h4>
+          <p>Amount paid: UGX ${Number(item.amount_paid).toLocaleString()}</p>
+          <p>Status: ${item.status}</p>
+          <p>Purchased: ${item.purchased_at ? new Date(item.purchased_at).toLocaleDateString() : "—"}</p>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error("My Products error:", error);
+    container.innerHTML = "<p>Could not load products: " + error.message + "</p>";
+  }
+}
+
 async function checkLoginSession() {
   showAuthMessage("Checking your account...");
 
