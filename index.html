@@ -141,6 +141,85 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
 .brand h1{font-size:16px;letter-spacing:1px}.brand small{font-size:7px}.user .welcome-label{display:none}
 .products{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+  /* VESTORA ADMIN DASHBOARD */
+#adminPanel {
+  display: none;
+  background: #ffffff;
+  color: #14532d;
+  padding: 20px;
+  border-radius: 14px;
+  margin: 15px 0;
+}
+
+#adminPanel.active {
+  display: block;
+}
+
+#adminPanel h2,
+#adminPanel h3 {
+  color: #14532d;
+}
+
+.admin-card {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.admin-card p {
+  font-size: 22px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+#adminPanel button {
+  background: #166534;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#adminUsersTable,
+#adminPurchasesTable {
+  overflow-x: auto;
+  margin: 12px 0 22px;
+}
+
+#adminPanel table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px;
+}
+
+#adminPanel th,
+#adminPanel td {
+  border: 1px solid #dcfce7;
+  padding: 10px;
+  text-align: left;
+}
+
+#adminPanel th {
+  background: #166534;
+  color: white;
+}
+
+#adminPanel tr:nth-child(even) {
+  background: #f0fdf4;
+}
+
+@media (min-width: 650px) {
+  #adminPanel .admin-card {
+    display: inline-block;
+    width: 28%;
+    vertical-align: top;
+    margin-right: 1%;
+  }
+  }
 </style>
 </head>
 
@@ -184,6 +263,11 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
   <button class="nav-btn" data-page="referrals" onclick="go('referrals')"><span class="nav-icon">♧</span>Referrals</button>
   <button class="nav-btn" data-page="redeem" onclick="go('redeem')"><span class="nav-icon">🎟</span>Redeem Codes</button>
   <button class="nav-btn" data-page="support" onclick="go('support')"><span class="nav-icon">☏</span>Support</button>
+  
+<button class="nav-btn admin-nav" id="adminNav" onclick="go('admin')">
+  <span class="nav-icon">⚙</span> Admin Dashboard
+</button>
+
   <button class="nav-btn" onclick="logoutUser()"><span class="nav-icon">⇥</span>Logout</button>
 </nav></aside>
 
@@ -268,7 +352,37 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
     <div class="box"><h3>◷ Recent Activity</h3><p class="auth-help">Connect your transaction records to display recent activity.</p><button class="secondary" onclick="go('history')">View History</button></div>
   </section>
 </div>
+<!-- VESTORA ADMIN DASHBOARD -->
+<div id="adminPanel" class="panel">
+  <h2>VESTORA Admin Dashboard</h2>
+  <p>Manage and monitor your platform.</p>
 
+  <button onclick="loadAdminDashboard()">Refresh Dashboard</button>
+
+  <div class="admin-card">
+    <h3>Total Users</h3>
+    <p id="adminUsers">Loading...</p>
+  </div>
+
+  <div class="admin-card">
+    <h3>Total User Balances</h3>
+    <p id="adminBalance">Loading...</p>
+  </div>
+
+  <div class="admin-card">
+    <h3>Product Purchases</h3>
+    <p id="adminPurchases">Loading...</p>
+  </div>
+
+  <p id="adminMessage"></p>
+
+  <h3>Recent Users</h3>
+  <div id="adminUsersTable">No records loaded yet.</div>
+
+  <h3>Recent Product Purchases</h3>
+  <div id="adminPurchasesTable">No records loaded yet.</div>
+</div>
+<!-- END VESTORA ADMIN DASHBOARD -->
 <section class="panel" id="messagePanel">
   <button class="back" onclick="go('dashboard')">← Back to dashboard</button>
   <h2 id="messageTitle">VESTORA</h2><p id="messageText"></p><div id="messageExtra"></div>
@@ -328,6 +442,7 @@ function setSignedIn(user) {
     document.getElementById("welcomeName").textContent = "User";
     document.getElementById("myReferralLink").value = "";
     go("dashboard");
+    checkAdminAccess();
     return;
   }
 
@@ -425,6 +540,7 @@ function toggleMenu() {
   button.setAttribute("aria-expanded", String(open));
 }
 
+
 function go(section) {
   if (!currentUser) {
     authSection.hidden = false;
@@ -435,11 +551,13 @@ function go(section) {
   const home = document.getElementById("homeView");
   const message = document.getElementById("messagePanel");
   const redeem = document.getElementById("redeemPanel");
+  const admin = document.getElementById("adminPanel");
   const sidebar = document.getElementById("sidebar");
 
   home.hidden = true;
   message.classList.remove("active");
   redeem.classList.remove("active");
+  if (admin) admin.classList.remove("active");
 
   document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
     button.classList.toggle("active", button.dataset.page === section);
@@ -448,16 +566,36 @@ function go(section) {
   sidebar.classList.remove("open");
   document.getElementById("menuToggle").setAttribute("aria-expanded", "false");
 
+  if (section === "admin") {
+    if (!admin) {
+      message.classList.add("active");
+      document.getElementById("messageTitle").textContent = "Admin Dashboard";
+      document.getElementById("messageText").textContent =
+        "The admin panel has not been connected yet.";
+      document.getElementById("messageExtra").replaceChildren();
+      return;
+    }
+
+    admin.classList.add("active");
+    if (typeof loadAdminDashboard === "function") {
+      loadAdminDashboard();
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
   if (section === "dashboard") {
     home.hidden = false;
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
+
   if (section === "products") {
     home.hidden = false;
     document.getElementById("products").scrollIntoView({ behavior: "smooth" });
     return;
   }
+
   if (section === "redeem") {
     redeem.classList.add("active");
     document.getElementById("redeemResult").textContent = "";
@@ -466,21 +604,44 @@ function go(section) {
   }
 
   const content = {
-    deposit: { title: "Deposit", text: "Deposits are not connected yet. Do not send money based only on this demo page." },
-    withdraw: { title: "Withdraw", text: "Withdrawals are not connected yet. No withdrawal request has been submitted." },
-    history: { title: "Transaction History", text: "Your transaction history will appear here after a secure backend is connected." },
-    investments: { title: "My Investments", text: "Investment records and processing are not connected yet." },
-    referrals: { title: "Referral Program", text: "Use the Share Your Link section on your dashboard. Referral tracking requires the Supabase referrals table and permissions." },
-    support: { title: "Customer Support", text: "Add and verify your official support contact before publishing the website." }
+    deposit: {
+      title: "Deposit",
+      text: "Deposits are not connected yet. Do not send money based only on this demo page."
+    },
+    withdraw: {
+      title: "Withdraw",
+      text: "Withdrawals are not connected yet. No withdrawal request has been submitted."
+    },
+    history: {
+      title: "Transaction History",
+      text: "Your transaction history will appear here after a secure backend is connected."
+    },
+    investments: {
+      title: "My Investments",
+      text: "Investment records and processing are not connected yet."
+    },
+    referrals: {
+      title: "Referral Program",
+      text: "Use the Share Your Link section on your dashboard. Referral tracking requires the Supabase referrals table and permissions."
+    },
+    support: {
+      title: "Customer Support",
+      text: "Add and verify your official support contact before publishing the website."
+    }
   };
 
-  const item = content[section] || { title: "VESTORA", text: "This feature is not available yet." };
+  const item = content[section] || {
+    title: "VESTORA",
+    text: "This feature is not available yet."
+  };
+
   document.getElementById("messageTitle").textContent = item.title;
   document.getElementById("messageText").textContent = item.text;
   document.getElementById("messageExtra").replaceChildren();
   message.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
 
 const productPlans = {
   V1:{ amount:20000, daily:5000, duration:15, total:75000 },
@@ -490,6 +651,163 @@ const productPlans = {
   V5:{ amount:500000, daily:100000, duration:70, total:7500000 },
   V6:{ amount:1000000, daily:220000, duration:90, total:20800000 }
 };
+
+let vestoraIsAdmin = false;
+
+async function checkAdminAccess() {
+  const adminButton = document.getElementById("adminNav");
+  if (adminButton) adminButton.style.display = "none";
+
+  vestoraIsAdmin = false;
+  if (!currentUser) return false;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("role")
+      .eq("id", currentUser.id)
+      .single();
+
+    if (error) throw error;
+
+    vestoraIsAdmin =
+      String(data?.role || "").toLowerCase() === "admin";
+
+    if (adminButton && vestoraIsAdmin) {
+      adminButton.style.display = "flex";
+    }
+
+    return vestoraIsAdmin;
+  } catch (error) {
+    console.error("Admin permission check:", error);
+    return false;
+  }
+}
+
+async function loadAdminDashboard() {
+  const message = document.getElementById("adminMessage");
+
+  if (!message) return;
+
+  message.textContent = "Checking administrator access...";
+
+  const allowed = await checkAdminAccess();
+
+  if (!allowed) {
+    message.textContent =
+      "Access denied. Sign in with an administrator account.";
+    document.getElementById("adminPanel")?.classList.remove("active");
+    return;
+  }
+
+  message.textContent = "Loading records...";
+
+  try {
+    const [usersResult, purchasesResult] = await Promise.all([
+      supabaseClient
+        .from("profiles")
+        .select("id, full_name, role, balance, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100),
+
+      supabaseClient
+        .from("product_purchases")
+        .select("user_id, amount_paid, status, purchased_at")
+        .order("purchased_at", { ascending: false })
+        .limit(100)
+    ]);
+
+    if (usersResult.error) throw usersResult.error;
+    if (purchasesResult.error) throw purchasesResult.error;
+
+    const users = usersResult.data || [];
+    const purchases = purchasesResult.data || [];
+
+    document.getElementById("adminUsers").textContent =
+      users.length.toLocaleString("en-UG");
+
+    document.getElementById("adminBalance").textContent =
+      "UGX " + users.reduce(
+        (sum, user) => sum + Number(user.balance || 0), 0
+      ).toLocaleString("en-UG");
+
+    document.getElementById("adminPurchases").textContent =
+      purchases.length.toLocaleString("en-UG");
+
+    const usersTable = document.getElementById("adminUsersTable");
+    usersTable.replaceChildren();
+
+    if (!users.length) {
+      usersTable.textContent = "No users found.";
+    } else {
+      const table = document.createElement("table");
+      table.innerHTML =
+        "<thead><tr><th>Name</th><th>Role</th><th>Balance</th></tr></thead>";
+
+      const tbody = document.createElement("tbody");
+
+      users.forEach(user => {
+        const row = document.createElement("tr");
+
+        [user.full_name || "Unnamed", user.role || "user",
+          "UGX " + Number(user.balance || 0).toLocaleString("en-UG")]
+          .forEach(value => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+          });
+
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      usersTable.appendChild(table);
+    }
+
+    const purchasesTable =
+      document.getElementById("adminPurchasesTable");
+    purchasesTable.replaceChildren();
+
+    if (!purchases.length) {
+      purchasesTable.textContent = "No product purchases found.";
+    } else {
+      const table = document.createElement("table");
+      table.innerHTML =
+        "<thead><tr><th>User ID</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>";
+
+      const tbody = document.createElement("tbody");
+
+      purchases.forEach(purchase => {
+        const row = document.createElement("tr");
+
+        [
+          purchase.user_id || "",
+          "UGX " + Number(purchase.amount_paid || 0).toLocaleString("en-UG"),
+          purchase.status || "unknown",
+          purchase.purchased_at
+            ? new Date(purchase.purchased_at).toLocaleDateString()
+            : ""
+        ].forEach(value => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      purchasesTable.appendChild(table);
+    }
+
+    message.textContent =
+      "Dashboard loaded. Showing up to 100 users and 100 purchases.";
+  } catch (error) {
+    console.error("Admin dashboard loading error:", error);
+    message.textContent =
+      "Could not load records. Check the Supabase table permissions.";
+  }
+}
 
 async function purchaseProduct(plan) {
   if (!currentUser) return alert("Please log in first.");
