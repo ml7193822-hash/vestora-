@@ -661,6 +661,7 @@ function toggleMenu() {
 }
 
 
+
 function go(section) {
   if (!currentUser) {
     authSection.hidden = false;
@@ -687,19 +688,82 @@ function go(section) {
   document.getElementById("menuToggle").setAttribute("aria-expanded", "false");
 
   if (section === "admin") {
-    if (!admin) {
+    if (admin) {
+      admin.classList.add("active");
+      loadAdminDashboard();
+    } else {
       message.classList.add("active");
       document.getElementById("messageTitle").textContent = "Admin Dashboard";
+      document.getElementById("messageText").textContent = "Admin panel is unavailable.";
       document.getElementById("messageExtra").replaceChildren();
-message.classList.add("active");
-
-if (section === "investments") {
-  loadInvestmentHistory();
-}
-
-window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
+
+  if (section === "dashboard") {
+    home.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  if (section === "products") {
+    home.hidden = false;
+    document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
+  if (section === "redeem") {
+    redeem.classList.add("active");
+    document.getElementById("redeemResult").textContent = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  const content = {
+    deposit: {
+      title: "Deposit",
+      text: "Deposits are not connected yet. Do not send money based only on this demo page."
+    },
+    withdraw: {
+      title: "Withdraw",
+      text: "Withdrawals are not connected yet. No withdrawal request has been submitted."
+    },
+    history: {
+      title: "Transaction History",
+      text: "Your transaction history will appear here after a secure backend is connected."
+    },
+    investments: {
+      title: "📊 Investment History",
+      text: "Loading your investment records..."
+    },
+    referrals: {
+      title: "Referral Program",
+      text: "Use the Share Your Link section on your dashboard."
+    },
+    support: {
+      title: "Customer Support",
+      text: "Add and verify your official support contact before publishing the website."
+    }
+  };
+
+  const item = content[section] || {
+    title: "VESTORA",
+    text: "This feature is not available yet."
+  };
+
+  document.getElementById("messageTitle").textContent = item.title;
+  document.getElementById("messageText").textContent = item.text;
+  document.getElementById("messageExtra").replaceChildren();
+  message.classList.add("active");
+
+  if (section === "investments") {
+    loadInvestmentHistory();
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 
   if (section === "dashboard") {
     home.hidden = false;
