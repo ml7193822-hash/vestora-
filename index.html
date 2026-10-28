@@ -477,7 +477,6 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
   </div>
 </div>
 <!-- END VESTORA ADMIN DASHBOARD -->
-  <!-- ADMIN REDEEM CODE MANAGER --><section class="panel" id="adminRedeemCodesPanel">
   
 <section class="panel" id="adminRedeemCodesPanel">
   <h2>Manage Redeem Codes</h2>
@@ -698,6 +697,50 @@ function go(section) {
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
+      if (section === "dashboard") {
+    home.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  if (section === "products") {
+    home.hidden = false;
+    document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
+  if (section === "redeem") {
+    redeem.classList.add("active");
+    document.getElementById("redeemResult").textContent = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  const content = {
+    deposit: { title: "💳 Deposit", text: "Contact support for deposit instructions." },
+    withdraw: { title: "💸 Withdraw", text: "Withdrawal requests are not connected yet." },
+    history: { title: "◷ Transaction History", text: "Transaction history is not connected yet." },
+    investments: { title: "📊 Investment History", text: "Loading your investment records..." },
+    referrals: { title: "♧ Referrals", text: "Your referral information is loading." },
+    support: { title: "☏ Support", text: "Contact customer support for help." }
+  };
+
+  const item = content[section] || {
+    title: "VESTORA",
+    text: "This section is being prepared."
+  };
+
+  document.getElementById("messageTitle").textContent = item.title;
+  document.getElementById("messageText").textContent = item.text;
+  document.getElementById("messageExtra").replaceChildren();
+  message.classList.add("active");
+
+  if (section === "investments") {
+    loadInvestmentHistory();
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  }
   }
 
   
