@@ -969,7 +969,83 @@ async function loadAdminDashboard() {
       "Could not load records. Check Supabase permissions and table access.";
   }
 }
+async function createAdminRedeemCode() {
+const code = document.getElementById("adminRedeemCode").value.trim().toUpperCase();
+const amount = Number(document.getElementById("adminRedeemAmount").value);
+const max = Number(document.getElementById("adminRedeemMax").value);
+const message = document.getElementById("adminRedeemCodeMessage");
 
+if (!code || !Number.isFinite(amount) || amount <= 0 ||
+!Number.isInteger(max) || max <= 0) {
+message.textContent = "Enter a code, a positive reward amount, and a valid redemption limit.";
+return;
+}
+
+message.textContent = "Creating code...";
+
+const { data, error } = await supabaseClient.rpc(
+"admin_create_vestora_redeem_code",
+{
+p_code: code,
+p_reward_amount: amount,
+p_max_redemptions: max
+}
+);
+
+if (error) {
+message.textContent = "Error: " + error.message;
+return;
+}
+
+message.textContent = "Redeem code created successfully!";
+document.getElementById("adminRedeemCode").value = "";
+document.getElementById("adminRedeemAmount").value = "";
+await loadAdminRedeemCodes();
+}
+
+async function loadAdminRedeemCodes() {
+const list = document.getElementById("adminRedeemCodesList");
+list.textContent = "Loading codes...";
+
+const { data, error } = await supabaseClient
+.from("redeem_codes")
+.select("code, reward_amount, active, max_redemptions, redeemed_count")
+.order("code");
+
+if (error) {
+list.textContent = "Error loading codes: " + error.message;
+return;
+}
+
+if (!data || data.length === 0) {
+list.textContent = "No redeem codes found.";
+return;
+}
+
+const table = document.createElement("table");
+table.innerHTML = "<thead><tr><th>Code</th><th>Reward (UGX)</th><th>Active</th><th>Limit</th><th>Redeemed</th></tr></thead>";
+
+const body = document.createElement("tbody");
+
+data.forEach(item => {
+const row = document.createElement("tr");
+[
+item.code,
+Number(item.reward_amount).toLocaleString(),
+item.active ? "Yes" : "No",
+item.max_redemptions,
+item.redeemed_count
+].forEach(value => {
+const cell = document.createElement("td");
+cell.textContent = String(value ?? "");
+row.appendChild(cell);
+});
+body.appendChild(row);
+});
+
+table.appendChild(body);
+list.replaceChildren(table);
+  }
 
 async function purchaseProduct(plan) {
   if (!currentUser) return alert("Please log in first.");
