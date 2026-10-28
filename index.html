@@ -1106,22 +1106,57 @@ document.getElementById("redeemForm").addEventListener("submit", async function(
   }
 });
 
+
 async function loadProfile() {
   if (!currentUser) return;
-  try {
-    const { data, error } = await supabaseClient.from("profiles").select("balance").eq("id", currentUser.id).single();
-    if (error) throw error;
-    const balance = Number(data.balance || 0);
-    document.getElementById("accountBalance").textContent = "UGX " + balance.toLocaleString("en-UG");
 
-    /* Do not treat the entire balance as earnings. */
-    document.getElementById("totalEarnings").textContent = "Not connected";
+  const balanceElement = document.getElementById("accountBalance");
+  const earningsElement = document.getElementById("totalEarnings");
+
+  try {
+    const { data: profile, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("balance")
+        .eq("id", currentUser.id)
+        .single();
+
+    if (profileError) throw profileError;
+
+    balanceElement.textContent =
+      "UGX " + Number(profile.balance || 0).toLocaleString("en-UG");
+
+    const { data: credits, error: creditsError } =
+      await supabaseClient
+        .from("daily_profit_credits")
+        .select("amount")
+        .eq("user_id", currentUser.id);
+
+    if (creditsError) throw creditsError;
+
+    const totalEarnings = (credits || []).reduce(
+      (sum, credit) => sum + Number(credit.amount || 0),
+      0
+    );
+
+    earningsElement.textContent =
+      "UGX " + totalEarnings.toLocaleString("en-UG");
 
     await loadMyProducts();
+
   } catch (error) {
-    console.error("Could not load profile:", error);
+    console.error("Dashboard loading error:", error);
+
+    if (balanceElement) {
+      balanceElement.textContent = "Unavailable";
+    }
+
+    if (earningsElement) {
+      earningsElement.textContent = "Unavailable";
+    }
   }
 }
+
 
 async function loadMyProducts() {
   const container = document.getElementById("myProductsList");
