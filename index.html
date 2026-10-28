@@ -477,6 +477,24 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
   </div>
 </div>
 <!-- END VESTORA ADMIN DASHBOARD -->
+  <!-- ADMIN REDEEM CODE MANAGER --><section class="panel" id="adminRedeemCodesPanel">
+  <h2>Manage Redeem Codes</h2>
+  <p>Create reward codes for your VESTORA users.</p><label for="adminRedeemCode">Redeem Code</label>
+<input id="adminRedeemCode" type="text" placeholder="Example: VESTORA5000">
+
+<label for="adminRedeemAmount">Reward Amount (UGX)</label>
+<input id="adminRedeemAmount" type="number" min="1" placeholder="5000">
+
+<label for="adminRedeemMax">Maximum Redemptions</label>
+<input id="adminRedeemMax" type="number" min="1" value="100">
+
+<button type="button" onclick="createAdminRedeemCode()">Create Redeem Code</button>
+
+  <div id="adminRedeemCodeMessage" style="margin-top:12px;"></div>  <h3>Existing Redeem Codes</h3>
+  <button type="button" onclick="loadAdminRedeemCodes()">Refresh Codes</button>
+  <div id="adminRedeemCodesList"></div>
+</section>
+<!-- END ADMIN REDEEM CODE MANAGER -->
 <section class="panel" id="messagePanel">
   <button class="back" onclick="go('dashboard')">← Back to dashboard</button>
   <h2 id="messageTitle">VESTORA</h2><p id="messageText"></p><div id="messageExtra"></div>
