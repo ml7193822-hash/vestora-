@@ -499,8 +499,7 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
   <button type="button" onclick="loadAdminRedeemCodes()">Refresh Codes</button>
   <div id="adminRedeemCodesList"></div>
 </section>
-<!-- END ADMIN REDEEM CODE MANAGER -->
-<!-- END VESTORA ADMIN DASHBOARD -->
+
 
 <!-- END ADMIN REDEEM CODE MANAGER--> only
 <section class="panel" id="messagePanel">
@@ -701,68 +700,7 @@ function go(section) {
     return;
   }
 
-  if (section === "dashboard") {
-    home.hidden = false;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-
-  if (section === "products") {
-    home.hidden = false;
-    document.getElementById("products").scrollIntoView({ behavior: "smooth" });
-    return;
-  }
-
-  if (section === "redeem") {
-    redeem.classList.add("active");
-    document.getElementById("redeemResult").textContent = "";
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-
-  const content = {
-    deposit: {
-      title: "Deposit",
-      text: "Deposits are not connected yet. Do not send money based only on this demo page."
-    },
-    withdraw: {
-      title: "Withdraw",
-      text: "Withdrawals are not connected yet. No withdrawal request has been submitted."
-    },
-    history: {
-      title: "Transaction History",
-      text: "Your transaction history will appear here after a secure backend is connected."
-    },
-    investments: {
-      title: "📊 Investment History",
-      text: "Loading your investment records..."
-    },
-    referrals: {
-      title: "Referral Program",
-      text: "Use the Share Your Link section on your dashboard."
-    },
-    support: {
-      title: "Customer Support",
-      text: "Add and verify your official support contact before publishing the website."
-    }
-  };
-
-  const item = content[section] || {
-    title: "VESTORA",
-    text: "This feature is not available yet."
-  };
-
-  document.getElementById("messageTitle").textContent = item.title;
-  document.getElementById("messageText").textContent = item.text;
-  document.getElementById("messageExtra").replaceChildren();
-  message.classList.add("active");
-
-  if (section === "investments") {
-    loadInvestmentHistory();
-  }
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
+  
 
 
   
