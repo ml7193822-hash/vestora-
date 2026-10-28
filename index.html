@@ -778,130 +778,180 @@ async function checkAdminAccess() {
   }
 }
 
+
 async function loadAdminDashboard() {
   const message = document.getElementById("adminMessage");
-
   if (!message) return;
 
   message.textContent = "Checking administrator access...";
 
-  const allowed = await checkAdminAccess();
-
-  if (!allowed) {
-    message.textContent =
-      "Access denied. Sign in with an administrator account.";
-    document.getElementById("adminPanel")?.classList.remove("active");
-    return;
-  }
-
-  message.textContent = "Loading records...";
-
   try {
-    const [usersResult, purchasesResult] = await Promise.all([
-      supabaseClient
-        .from("profiles")
-        .select("id, full_name, role, balance, created_at")
-        .order("created_at", { ascending: false })
-        .limit(100),
+    const allowed = await checkAdminAccess();
 
-      supabaseClient
-        .from("product_purchases")
-        .select("user_id, amount_paid, status, purchased_at")
-        .order("purchased_at", { ascending: false })
-        .limit(100)
-    ]);
+    if (!allowed) {
+      message.textContent = "Access denied. Sign in with an administrator account.";
+      document.getElementById("adminPanel")?.classList.remove("active");
+      return;
+    }
+
+    message.textContent = "Loading records...";
+
+    const [usersResult, purchasesResult, depositsResult] =
+      await Promise.all([
+        supabaseClient
+          .from("profiles")
+          .select("id, full_name, role, balance, created_at")
+          .order("created_at", { ascending: false })
+          .limit(100),
+
+        supabaseClient
+          .from("product_purchases")
+          .select("user_id, amount_paid, status, purchased_at")
+          .order("purchased_at", { ascending: false })
+          .limit(100),
+
+        supabaseClient
+          .from("pawapay_deposits")
+          .select("user_id, amount, status, created_at")
+          .limit(1000)
+      ]);
 
     if (usersResult.error) throw usersResult.error;
     if (purchasesResult.error) throw purchasesResult.error;
+    if (depositsResult.error) throw depositsResult.error;
 
     const users = usersResult.data || [];
     const purchases = purchasesResult.data || [];
+    const deposits = depositsResult.data || [];
 
-    document.getElementById("adminUsers").textContent =
-      users.length.toLocaleString("en-UG");
+    const money = value =>
+      "UGX " + Number(value || 0).toLocaleString("en-UG");
 
-    document.getElementById("adminBalance").textContent =
-      "UGX " + users.reduce(
-        (sum, user) => sum + Number(user.balance || 0), 0
-      ).toLocaleString("en-UG");
+    const setText = (id, value) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    };
 
-    document.getElementById("adminPurchases").textContent =
-      purchases.length.toLocaleString("en-UG");
+    setText("adminUsers", users.length.toLocaleString("en-UG"));
+    setText(
+      "adminBalance",
+      money(users.reduce((sum, user) => sum + Number(user.balance || 0), 0))
+    );
+    setText("adminPurchases", purchases.length.toLocaleString("en-UG"));
 
-    const usersTable = document.getElementById("adminUsersTable");
-    usersTable.replaceChildren();
+    // Only completed deposits count as received.
+    const completedDeposits = deposits.filter(item =>
+      ["success", "successful", "completed", "accepted"]
+        .includes(String(item.status || "").toLowerCase())
+    );
 
-    if (!users.length) {
-      usersTable.textContent = "No users found.";
-    } else {
+    setText(
+      "adminDeposits",
+      money(completedDeposits.reduce(
+        (sum, item) => sum + Number(item.amount || 0), 0
+      ))
+    );
+
+    const renderTable = (id, headers, rows) => {
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      target.replaceChildren();
+
       const table = document.createElement("table");
-      table.innerHTML =
-        "<thead><tr><th>Name</th><th>Role</th><th>Balance</th></tr></thead>";
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      headers.forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
 
       const tbody = document.createElement("tbody");
 
-      users.forEach(user => {
+      if (!rows.length) {
         const row = document.createElement("tr");
-
-        [user.full_name || "Unnamed", user.role || "user",
-          "UGX " + Number(user.balance || 0).toLocaleString("en-UG")]
-          .forEach(value => {
+        const cell = document.createElement("td");
+        cell.colSpan = headers.length;
+        cell.textContent = "No records found.";
+        row.appendChild(cell);
+        tbody.appendChild(row);
+      } else {
+        rows.forEach(values => {
+          const row = document.createElement("tr");
+          values.forEach(value => {
             const cell = document.createElement("td");
-            cell.textContent = value;
+            cell.textContent = String(value ?? "");
             row.appendChild(cell);
           });
-
-        tbody.appendChild(row);
-      });
-
-      table.appendChild(tbody);
-      usersTable.appendChild(table);
-    }
-
-    const purchasesTable =
-      document.getElementById("adminPurchasesTable");
-    purchasesTable.replaceChildren();
-
-    if (!purchases.length) {
-      purchasesTable.textContent = "No product purchases found.";
-    } else {
-      const table = document.createElement("table");
-      table.innerHTML =
-        "<thead><tr><th>User ID</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>";
-
-      const tbody = document.createElement("tbody");
-
-      purchases.forEach(purchase => {
-        const row = document.createElement("tr");
-
-        [
-          purchase.user_id || "",
-          "UGX " + Number(purchase.amount_paid || 0).toLocaleString("en-UG"),
-          purchase.status || "unknown",
-          purchase.purchased_at
-            ? new Date(purchase.purchased_at).toLocaleDateString()
-            : ""
-        ].forEach(value => {
-          const cell = document.createElement("td");
-          cell.textContent = value;
-          row.appendChild(cell);
+          tbody.appendChild(row);
         });
-
-        tbody.appendChild(row);
-      });
+      }
 
       table.appendChild(tbody);
-      purchasesTable.appendChild(table);
-    }
+      target.appendChild(table);
+    };
+
+    renderTable(
+      "adminUsersTable",
+      ["Name", "Email/ID", "Balance", "Role"],
+      users.map(user => [
+        user.full_name || "Unnamed",
+        user.id || "",
+        money(user.balance),
+        user.role || "user"
+      ])
+    );
+
+    renderTable(
+      "adminPurchasesTable",
+      ["User ID", "Amount", "Status", "Date"],
+      purchases.map(item => [
+        item.user_id,
+        money(item.amount_paid),
+        item.status || "unknown",
+        item.purchased_at
+          ? new Date(item.purchased_at).toLocaleDateString()
+          : ""
+      ])
+    );
+
+    renderTable(
+      "adminDepositsTable",
+      ["User ID", "Amount", "Status", "Date"],
+      deposits.map(item => [
+        item.user_id,
+        money(item.amount),
+        item.status || "unknown",
+        item.created_at
+          ? new Date(item.created_at).toLocaleDateString()
+          : ""
+      ])
+    );
+
+    setText("adminWithdrawals", "Not connected");
+    setText("adminPendingWithdrawals", "Not connected");
+    setText("adminInvestmentCount", "Not connected");
+    setText("adminEarnings", "Not connected");
+
+    renderTable("adminWithdrawalsTable",
+      ["Status"], [["Withdrawal table not configured"]]);
+    renderTable("adminInvestmentsTable",
+      ["Status"], [["Investment table not connected yet"]]);
 
     message.textContent =
-      "Dashboard loaded. Showing up to 100 users and 100 purchases.";
+      "Dashboard loaded. Deposit totals include only recognized successful statuses. Up to 100 users and purchases are shown.";
   } catch (error) {
     console.error("Admin dashboard loading error:", error);
     message.textContent =
-      "Could not load records. Check the Supabase table permissions.";
+      "Could not load records. Check Supabase permissions and table access.";
   }
 }
+
 
 async function purchaseProduct(plan) {
   if (!currentUser) return alert("Please log in first.");
