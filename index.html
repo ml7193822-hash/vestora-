@@ -1166,8 +1166,6 @@ async function loadProfile() {
 }
 
 async function loadMyProducts() {
-  
-async function loadMyProducts() {
   const target = document.getElementById("myProductsList");
   if (!target || !currentUser) return;
 
@@ -1249,16 +1247,11 @@ async function loadMyProducts() {
 
       target.appendChild(card);
     });
-
   } catch (error) {
     console.error("My Products loading error:", error);
     showMessage("Could not load products: " + error.message);
-  
-
-
+  }
 }
-
-
 
 async function loadInvestmentHistory() {
   const target = document.getElementById("messageExtra");
