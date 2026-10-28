@@ -1152,7 +1152,7 @@ async function loadProfile() {
 
     await loadMyProducts();
 
-  } catch (error) {
+    } catch (error) {
     console.error("Dashboard loading error:", error);
 
     if (balanceElement) {
@@ -1163,6 +1163,9 @@ async function loadProfile() {
       earningsElement.textContent = "Unavailable";
     }
   }
+}
+
+async function loadMyProducts() {
   
 async function loadMyProducts() {
   const target = document.getElementById("myProductsList");
@@ -1250,8 +1253,8 @@ async function loadMyProducts() {
   } catch (error) {
     console.error("My Products loading error:", error);
     showMessage("Could not load products: " + error.message);
-  }
-}
+  
+
 
 }
 
