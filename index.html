@@ -352,35 +352,129 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
     <div class="box"><h3>◷ Recent Activity</h3><p class="auth-help">Connect your transaction records to display recent activity.</p><button class="secondary" onclick="go('history')">View History</button></div>
   </section>
 </div>
+
 <!-- VESTORA ADMIN DASHBOARD -->
 <div id="adminPanel" class="panel">
   <h2>VESTORA Admin Dashboard</h2>
-  <p>Manage and monitor your platform.</p>
+  <p id="adminMessage">Loading admin data...</p>
 
-  <button onclick="loadAdminDashboard()">Refresh Dashboard</button>
+  <div class="admin-grid-two">
+    <div class="admin-card">
+      <h3>Registered Users</h3>
+      <p id="adminUsers">0</p>
+    </div>
 
-  <div class="admin-card">
-    <h3>Total Users</h3>
-    <p id="adminUsers">Loading...</p>
+    <div class="admin-card">
+      <h3>Total Deposits</h3>
+      <p id="adminDeposits">UGX 0</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>Total Withdrawals</h3>
+      <p id="adminWithdrawals">UGX 0</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>Pending Withdrawals</h3>
+      <p id="adminPendingWithdrawals">0</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>Total User Balances</h3>
+      <p id="adminBalance">UGX 0</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>Product Purchases</h3>
+      <p id="adminPurchases">0</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>Investments</h3>
+      <p id="adminInvestmentCount">0</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>Total Earnings</h3>
+      <p id="adminEarnings">UGX 0</p>
+    </div>
   </div>
 
-  <div class="admin-card">
-    <h3>Total User Balances</h3>
-    <p id="adminBalance">Loading...</p>
+  <h3>Registered Users</h3>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Balance</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody id="adminUsersTable"></tbody>
+    </table>
   </div>
 
-  <div class="admin-card">
-    <h3>Product Purchases</h3>
-    <p id="adminPurchases">Loading...</p>
+  <h3>Product Purchases</h3>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Product</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="adminPurchasesTable"></tbody>
+    </table>
   </div>
 
-  <p id="adminMessage"></p>
+  <h3>Deposit Requests</h3>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="adminDepositsTable"></tbody>
+    </table>
+  </div>
 
-  <h3>Recent Users</h3>
-  <div id="adminUsersTable">No records loaded yet.</div>
+  <h3>Withdrawal Requests</h3>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="adminWithdrawalsTable"></tbody>
+    </table>
+  </div>
 
-  <h3>Recent Product Purchases</h3>
-  <div id="adminPurchasesTable">No records loaded yet.</div>
+  <h3>Investments</h3>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="adminInvestmentsTable"></tbody>
+    </table>
+  </div>
 </div>
 <!-- END VESTORA ADMIN DASHBOARD -->
 <section class="panel" id="messagePanel">
