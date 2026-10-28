@@ -690,17 +690,14 @@ function go(section) {
     if (!admin) {
       message.classList.add("active");
       document.getElementById("messageTitle").textContent = "Admin Dashboard";
-      document.getElementById("messageText").textContent =
-        "The admin panel has not been connected yet.";
       document.getElementById("messageExtra").replaceChildren();
-      return;
-    }
+message.classList.add("active");
 
-    admin.classList.add("active");
-    if (typeof loadAdminDashboard === "function") {
-      loadAdminDashboard();
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+if (section === "investments") {
+  loadInvestmentHistory();
+}
+
+window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
 
@@ -737,8 +734,9 @@ function go(section) {
       text: "Your transaction history will appear here after a secure backend is connected."
     },
     investments: {
-      title: "My Investments",
-      text: "Investment records and processing are not connected yet."
+  title: "📊 Investment History",
+  text: "Loading your investment records..."
+},
     },
     referrals: {
       title: "Referral Program",
@@ -1158,56 +1156,175 @@ async function loadProfile() {
 }
 
 
-async function loadMyProducts() {
-  const container = document.getElementById("myProductsList");
-  if (!container) return;
-  if (!currentUser) { container.textContent = "Please log in to view your products."; return; }
 
-  container.textContent = "Loading your products...";
+async function loadInvestmentHistory() {
+  const target = document.getElementById("messageExtra");
+  if (!target || !currentUser) return;
+
+  target.replaceChildren();
+  const loading = document.createElement("p");
+  loading.textContent = "Loading your investment history...";
+  target.appendChild(loading);
+
+  const money = value =>
+    "UGX " + Number(value || 0).toLocaleString("en-UG");
+
+  const addText = (parent, tag, text, className = "") => {
+    const element = document.createElement(tag);
+    element.textContent = text;
+    if (className) element.className = className;
+    parent.appendChild(element);
+    return element;
+  };
+
   try {
-    const { data, error } = await supabaseClient.from("product_purchases")
-      .select("id, amount_paid, status, purchased_at")
+    const { data: purchases, error } = await supabaseClient
+      .from("product_purchases")
+      .select(
+        "id, product_id, amount_paid, status, purchased_at, profit_start_date, profit_end_date"
+      )
       .eq("user_id", currentUser.id)
       .order("purchased_at", { ascending: false });
+
     if (error) throw error;
 
-    if (!data || data.length === 0) {
-      container.replaceChildren();
-      const empty = document.createElement("div");
-      empty.className = "empty-products";
-      empty.textContent = "You have not purchased any products yet.";
-      container.appendChild(empty);
+    target.replaceChildren();
+
+    if (!purchases || purchases.length === 0) {
+      addText(target, "p", "You have no investment records yet.");
       return;
     }
 
-    container.replaceChildren();
-    data.forEach(item => {
-      const card = document.createElement("div");
+    const purchaseIds = purchases.map(item => item.id);
+    const productIds = [...new Set(
+      purchases.map(item => item.product_id).filter(Boolean)
+    )];
+
+    const [productsResult, creditsResult] = await Promise.all([
+      productIds.length
+        ? supabaseClient
+            .from("products")
+            .select("id, product_name, daily_profit, duration_days")
+            .in("id", productIds)
+        : Promise.resolve({ data: [], error: null }),
+
+      supabaseClient
+        .from("daily_profit_credits")
+        .select("purchase_id, amount, profit_date")
+        .eq("user_id", currentUser.id)
+        .in("purchase_id", purchaseIds)
+    ]);
+
+    if (productsResult.error) throw productsResult.error;
+    if (creditsResult.error) throw creditsResult.error;
+
+    const productsById = new Map(
+      (productsResult.data || []).map(item => [String(item.id), item])
+    );
+
+    const earningsByPurchase = new Map();
+
+    (creditsResult.data || []).forEach(credit => {
+      const id = String(credit.purchase_id);
+      const previous = earningsByPurchase.get(id) || {
+        total: 0,
+        days: 0
+      };
+
+      previous.total += Number(credit.amount || 0);
+      previous.days += 1;
+      earningsByPurchase.set(id, previous);
+    });
+
+    purchases.forEach(item => {
+      const product = productsById.get(String(item.product_id));
+      const earnings = earningsByPurchase.get(String(item.id)) || {
+        total: 0,
+        days: 0
+      };
+
+      const card = document.createElement("article");
       card.className = "my-product-item";
-      const heading = document.createElement("h4");
-      heading.textContent = "🌿 VESTORA Product";
-      const amount = document.createElement("p");
-      amount.textContent = "Amount paid: UGX " + Number(item.amount_paid || 0).toLocaleString("en-UG");
-      const status = document.createElement("p");
-      status.appendChild(document.createTextNode("Status: "));
-      const badge = document.createElement("span");
-      badge.className = "product-status";
-      badge.textContent = item.status || "Unknown";
-      status.appendChild(badge);
-      const purchased = document.createElement("p");
-      purchased.textContent = "Purchased: " + (item.purchased_at ? new Date(item.purchased_at).toLocaleDateString() : "—");
-      card.append(heading, amount, status, purchased);
-      container.appendChild(card);
+      card.style.marginBottom = "12px";
+
+      addText(
+        card,
+        "h3",
+        product?.product_name || "VESTORA Product"
+      );
+
+      addText(card, "p", "Purchase ID: " + item.id);
+      addText(card, "p", "Amount invested: " + money(item.amount_paid));
+
+      const status = addText(
+        card,
+        "p",
+        "Status: " + (item.status || "Unknown")
+      );
+      status.style.fontWeight = "bold";
+
+      addText(
+        card,
+        "p",
+        "Daily profit target: " +
+          money(product?.daily_profit || 0)
+      );
+
+      addText(
+        card,
+        "p",
+        "Credited profit: " + money(earnings.total)
+      );
+
+      addText(
+        card,
+        "p",
+        "Profit credits recorded: " + earnings.days
+      );
+
+      addText(
+        card,
+        "p",
+        "Purchased: " + (
+          item.purchased_at
+            ? new Date(item.purchased_at).toLocaleString()
+            : "—"
+        )
+      );
+
+      addText(
+        card,
+        "p",
+        "Profit start: " + (
+          item.profit_start_date
+            ? new Date(item.profit_start_date).toLocaleDateString()
+            : "Not set"
+        )
+      );
+
+      addText(
+        card,
+        "p",
+        "Investment end: " + (
+          item.profit_end_date
+            ? new Date(item.profit_end_date).toLocaleDateString()
+            : "Not set"
+        )
+      );
+
+      target.appendChild(card);
     });
   } catch (error) {
-    console.error("My Products error:", error);
-    container.replaceChildren();
-    const message = document.createElement("p");
-    message.className = "empty-products";
-    message.textContent = "Could not load products. Please refresh and try again.";
-    container.appendChild(message);
+    console.error("Investment history error:", error);
+    target.replaceChildren();
+    addText(
+      target,
+      "p",
+      "Could not load investment history: " + error.message
+    );
   }
 }
+
 
 /* Personal referral URL */
 function getReferralLink() {
