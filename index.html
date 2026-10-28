@@ -660,6 +660,7 @@ function toggleMenu() {
 
 
 
+
 function go(section) {
   if (!currentUser) {
     authSection.hidden = false;
@@ -676,6 +677,7 @@ function go(section) {
   home.hidden = true;
   message.classList.remove("active");
   redeem.classList.remove("active");
+
   if (admin) admin.classList.remove("active");
 
   document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
@@ -685,19 +687,7 @@ function go(section) {
   sidebar.classList.remove("open");
   document.getElementById("menuToggle").setAttribute("aria-expanded", "false");
 
-  if (section === "admin") {
-    if (admin) {
-      admin.classList.add("active");
-      loadAdminDashboard();
-    } else {
-      message.classList.add("active");
-      document.getElementById("messageTitle").textContent = "Admin Dashboard";
-      document.getElementById("messageText").textContent = "Admin panel is unavailable.";
-      document.getElementById("messageExtra").replaceChildren();
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-      if (section === "dashboard") {
+  if (section === "dashboard") {
     home.hidden = false;
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
@@ -705,7 +695,9 @@ function go(section) {
 
   if (section === "products") {
     home.hidden = false;
-    document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("products").scrollIntoView({
+      behavior: "smooth"
+    });
     return;
   }
 
@@ -716,13 +708,48 @@ function go(section) {
     return;
   }
 
+  if (section === "admin") {
+    if (admin) {
+      admin.classList.add("active");
+      loadAdminDashboard();
+    } else {
+      message.classList.add("active");
+      document.getElementById("messageTitle").textContent =
+        "Admin Dashboard";
+      document.getElementById("messageText").textContent =
+        "Admin panel is unavailable.";
+      document.getElementById("messageExtra").replaceChildren();
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
   const content = {
-    deposit: { title: "💳 Deposit", text: "Contact support for deposit instructions." },
-    withdraw: { title: "💸 Withdraw", text: "Withdrawal requests are not connected yet." },
-    history: { title: "◷ Transaction History", text: "Transaction history is not connected yet." },
-    investments: { title: "📊 Investment History", text: "Loading your investment records..." },
-    referrals: { title: "♧ Referrals", text: "Your referral information is loading." },
-    support: { title: "☏ Support", text: "Contact customer support for help." }
+    deposit: {
+      title: "💳 Deposit",
+      text: "Contact support for deposit instructions."
+    },
+    withdraw: {
+      title: "💸 Withdraw",
+      text: "Withdrawal requests are not connected yet."
+    },
+    history: {
+      title: "◷ Transaction History",
+      text: "Transaction history is not connected yet."
+    },
+    investments: {
+      title: "📊 Investment History",
+      text: "Loading your investment records..."
+    },
+    referrals: {
+      title: "♧ Referrals",
+      text: "Your referral information is loading."
+    },
+    support: {
+      title: "☏ Support",
+      text: "Contact customer support for help."
+    }
   };
 
   const item = content[section] || {
@@ -733,6 +760,7 @@ function go(section) {
   document.getElementById("messageTitle").textContent = item.title;
   document.getElementById("messageText").textContent = item.text;
   document.getElementById("messageExtra").replaceChildren();
+
   message.classList.add("active");
 
   if (section === "investments") {
@@ -740,13 +768,7 @@ function go(section) {
   }
 
   window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-  }
-
-  
-
-
-  
+}
 
 
 const productPlans = {
