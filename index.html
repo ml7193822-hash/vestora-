@@ -353,9 +353,13 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
   </section>
 </div>
 
-<!-- VESTORA ADMIN DASHBOARD -->
-  
-<button type="button" onclick="go('adminRedeemCodes')">
+<!-- ADMIN ONLY: MANAGE REDEEM CODES -->
+<button
+  type="button"
+  id="adminRedeemCodesButton"
+  onclick="go('adminRedeemCodes')"
+  style="display:none;"
+>
   Manage Redeem Codes
 </button>
 
