@@ -100,6 +100,70 @@ main{max-width:1400px;margin:auto;padding:20px}
 .panel{display:none;background:white;border:1px solid var(--border);border-radius:13px;padding:20px;margin-bottom:20px}
 .panel.active{display:block}
 .panel h2{margin-top:0}
+  
+/* VESTORA DEPOSIT FORM — MOBILE FIX */
+#messageExtra {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#messageExtra form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#messageExtra form label {
+  display: block;
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #064e3b;
+}
+
+#messageExtra form input,
+#messageExtra form select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 13px;
+  margin: 0;
+  border: 1px solid #cbdcd4;
+  border-radius: 9px;
+  background: #fff;
+  color: #173c30;
+  font-size: 16px;
+}
+
+#messageExtra form button[type="submit"] {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 9px;
+  background: #078747;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#messageExtra form button[type="submit"]:disabled {
+  opacity: 0.6;
+}
+
+#depositFormMessage {
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 5px 0;
+}
+
 .panel p{line-height:1.6;font-size:14px}
 .field{margin:15px 0}
 .field label{display:block;font-size:13px;font-weight:bold;margin-bottom:7px}
