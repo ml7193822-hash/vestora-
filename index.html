@@ -1087,32 +1087,50 @@ document.getElementById("registerForm").addEventListener("submit", registerUser)
 
 document.getElementById("redeemForm").addEventListener("submit", async function(event) {
   event.preventDefault();
+
   const input = document.getElementById("redeemInput");
   const result = document.getElementById("redeemResult");
   const button = this.querySelector('button[type="submit"]');
   const code = input.value.trim().toUpperCase();
 
-  if (!code) { result.textContent = "Please enter a code."; return; }
-  if (!currentUser) { result.textContent = "Please log in first."; return; }
+  if (!code) {
+    result.textContent = "Please enter a code.";
+    return;
+  }
+
+  if (!currentUser) {
+    result.textContent = "Please log in first.";
+    return;
+  }
 
   button.disabled = true;
-  button.textContent = "Checking...";
-  result.textContent = "Validating your code...";
+  result.textContent = "Checking redeem code...";
 
   try {
-    const { data, error } = await supabaseClient.rpc("redeem_vestora_code", { p_code: code });
+    const { data, error } = await supabaseClient.rpc(
+      "redeem_vestora_code",
+      { p_code: code }
+    );
+
     if (error) throw error;
-    result.textContent = typeof data === "string" ? data : JSON.stringify(data);
+
+    result.textContent =
+      "Success! UGX " +
+      Number(data.amount).toLocaleString() +
+      " has been added to your balance.";
+
     input.value = "";
-    if (String(data).toLowerCase().includes("success")) await loadProfile();
+
+    if (typeof loadProfile === "function") {
+      await loadProfile();
+    }
   } catch (error) {
-    console.error("Redeem error:", error);
-    result.textContent = "Unable to redeem the code. Please check the code and try again.";
+    result.textContent = error.message || "Could not redeem this code.";
   } finally {
     button.disabled = false;
-    button.textContent = "Check Code";
   }
 });
+
 
 
 async function loadProfile() {
