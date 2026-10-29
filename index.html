@@ -2309,6 +2309,10 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
   }
 });
 
+document.getElementById("loginButton")?.addEventListener("click", loginUser);
+document.getElementById("registerButton")?.addEventListener("click", registerUser);
+document.getElementById("resetButton")?.addEventListener("click", resetPassword);
+
 checkLoginSession();
 </script>
 </body>
