@@ -582,9 +582,10 @@ function setSignedIn(user) {
   authSection.hidden = true;
   appView.hidden = false;
   go("dashboard");
-  loadProfile();
-  loadReferralInfo();
-  recordReferralIfNeeded();
+checkAdminAccess();
+loadProfile();
+loadReferralInfo();
+recordReferralIfNeeded();
 }
 
 async function registerUser(event) {
@@ -814,11 +815,16 @@ const productPlans = {
 
 let vestoraIsAdmin = false;
 
+
 async function checkAdminAccess() {
   const adminButton = document.getElementById("adminNav");
-  if (adminButton) adminButton.style.display = "none";
+  const redeemButton = document.getElementById("adminRedeemCodesButton");
 
   vestoraIsAdmin = false;
+
+  if (adminButton) adminButton.hidden = true;
+  if (redeemButton) redeemButton.hidden = true;
+
   if (!currentUser) return false;
 
   try {
@@ -831,18 +837,20 @@ async function checkAdminAccess() {
     if (error) throw error;
 
     vestoraIsAdmin =
-      String(data?.role || "").toLowerCase() === "admin";
+      String(data?.role || "").trim().toLowerCase() === "admin";
 
-    if (adminButton && vestoraIsAdmin) {
-      adminButton.style.display = "flex";
+    if (vestoraIsAdmin) {
+      if (adminButton) adminButton.hidden = false;
+      if (redeemButton) redeemButton.hidden = false;
     }
 
     return vestoraIsAdmin;
   } catch (error) {
-    console.error("Admin permission check:", error);
+    console.error("Admin access check failed:", error);
     return false;
   }
 }
+
 
 
 async function loadAdminDashboard() {
