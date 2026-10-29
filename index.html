@@ -1062,8 +1062,7 @@ deposit: {
 
   const extra = document.getElementById("messageExtra");
 
-  extra.innerHTML = `
-    <form id="manualDepositForm">
+  document.getElementById("manualDepositForm").addEventListener
       <label>Payment method</label>
       <select id="depositMethod" required>
         <option value="">Choose Mobile Money</option>
