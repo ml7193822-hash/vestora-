@@ -874,7 +874,9 @@ async function go(section) {
     loadInvestmentHistory();
   }
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  message.classList.add("active");
+window.scrollTo({ top: 0, behavior: "smooth" });
+return;
 }
 
 const productPlans = {
