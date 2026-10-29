@@ -786,6 +786,18 @@ function showAuthMessage(message, isError = false) {
   authMessage.style.background = isError ? "#fde8e7" : "#e2f7e9";
   authMessage.style.color = isError ? "#922b21" : "#075b38";
 }
+  
+function copyDepositNumber(number) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(number)
+      .then(() => alert("Copied payment number: " + number))
+      .catch(() => prompt("Copy this payment number:", number));
+  } else {
+    prompt("Copy this payment number:", number);
+  }
+}
+
+
 
 function setBusy(value) {
   busy = value;
