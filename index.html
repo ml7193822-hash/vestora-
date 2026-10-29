@@ -712,7 +712,12 @@ function go(section) {
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
-
+if (section === 'adminRedeemCodes') {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('adminRedeemCodesPanel').classList.add('active');
+  loadAdminRedeemCodes();
+  return;
+}
   if (section === "admin") {
     if (admin) {
       admin.classList.add("active");
