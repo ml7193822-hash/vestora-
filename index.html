@@ -1044,6 +1044,61 @@ async function go(section) {
   window.scrollTo({ top: 0, behavior: "smooth" });
   return;
   }
+  
+  if (section === "withdraw") {
+    message.classList.add("active");
+
+    document.getElementById("messageTitle").textContent = "💸 Withdraw";
+    document.getElementById("messageText").textContent =
+      "Enter your withdrawal details carefully.";
+
+    const extra = document.getElementById("messageExtra");
+
+    extra.innerHTML = `
+      <form id="withdrawForm">
+        <label>Withdrawal method</label>
+        <select id="withdrawMethod" required>
+          <option value="">Choose Mobile Money</option>
+          <option value="MTN Mobile Money">MTN Mobile Money</option>
+          <option value="Airtel Money">Airtel Money</option>
+        </select>
+
+        <label>Withdrawal amount (UGX)</label>
+        <input
+          id="withdrawAmount"
+          type="number"
+          min="2000"
+          step="1000"
+          placeholder="Enter amount"
+          required
+        >
+
+        <label>Receiving Mobile Money number</label>
+        <input
+          id="withdrawPhone"
+          type="tel"
+          placeholder="e.g. 0771234567"
+          required
+        >
+
+        <button type="submit">Submit Withdrawal Request</button>
+        <p id="withdrawFormMessage" class="result"></p>
+      </form>
+    `;
+
+    document.getElementById("withdrawForm").addEventListener(
+      "submit",
+      event => {
+        event.preventDefault();
+        document.getElementById("withdrawFormMessage").textContent =
+          "The withdrawal form is ready. Request submission must be connected to the VESTORA database before requests can be processed.";
+      }
+    );
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
 
   document.getElementById("messageTitle").textContent = item.title;
   document.getElementById("messageText").textContent = item.text;
