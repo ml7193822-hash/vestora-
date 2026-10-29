@@ -1055,79 +1055,101 @@ deposit: {
     title: "VESTORA",
     text: "This section is being prepared."
   };
+  
   if (section === "deposit") {
     message.classList.add("active");
-  document.getElementById("messageTitle").textContent = "💳 Deposit";
-  document.getElementById("messageText").textContent = "";
+    document.getElementById("messageTitle").textContent = "💳 Deposit";
+    document.getElementById("messageText").textContent =
+      "Send your payment to one of the numbers below, then submit your transaction details.";
 
-  const extra = document.getElementById("messageExtra");
+    const extra = document.getElementById("messageExtra");
 
-  document.getElementById("manualDepositForm").addEventListener
-      <label>Payment method</label>
-      <select id="depositMethod" required>
-        <option value="">Choose Mobile Money</option>
-        <option value="MTN Mobile Money">MTN Mobile Money</option>
-        <option value="Airtel Money">Airtel Money</option>
-      </select>
+    extra.innerHTML = `
+      <div class="deposit-card mtn-card">
+        <h3>🟡 MTN Mobile Money</h3>
+        <p class="deposit-number">0791592637</p>
+        <p>Registered name: SABITI. FRANK</p>
+        <button type="button" onclick="copyDepositNumber('0791592637')">
+          Copy MTN Number
+        </button>
+      </div>
 
-      <label>Amount (UGX)</label>
-      <input id="depositAmount" type="number" min="1000" step="1000" required>
+      <div class="deposit-card airtel-card">
+        <h3>🔴 Airtel Money</h3>
+        <p class="deposit-number">0707728435</p>
+        <p>Registered name: BAKASHABARUHANGA ASA</p>
+        <button type="button" onclick="copyDepositNumber('0707728435')">
+          Copy Airtel Number
+        </button>
+      </div>
 
-      <label>Sender's Mobile Money number</label>
-      <input id="depositPhone" type="tel" required>
+      <form id="manualDepositForm">
+        <label>Payment method</label>
+        <select id="depositMethod" required>
+          <option value="">Choose Mobile Money</option>
+          <option value="MTN Mobile Money">MTN Mobile Money</option>
+          <option value="Airtel Money">Airtel Money</option>
+        </select>
 
-      <label>Transaction reference</label>
-      <input id="depositReference" type="text" required>
+        <label>Amount (UGX)</label>
+        <input id="depositAmount" type="number" min="1000" step="1000" required>
 
-      <button type="submit">Submit Deposit</button>
-      <p id="depositFormMessage"></p>
-    </form>
-  `;
+        <label>Sender's Mobile Money number</label>
+        <input id="depositPhone" type="tel" required>
 
-  document.getElementById("manualDepositForm").addEventListener("submit", async event => {
-    event.preventDefault();
+        <label>Transaction reference</label>
+        <input id="depositReference" type="text" required>
 
-    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
-    const result = document.getElementById("depositFormMessage");
-    submitButton.disabled = true;
-    result.textContent = "Submitting deposit request...";
+        <button type="submit">Submit Deposit</button>
+        <p id="depositFormMessage"></p>
+      </form>
+    `;
 
-    try {
-      if (!currentUser) throw new Error("Please sign in first.");
+    document.getElementById("manualDepositForm").addEventListener("submit", async event => {
+      event.preventDefault();
 
-      const amount = Number(document.getElementById("depositAmount").value);
-      const method = document.getElementById("depositMethod").value;
-      const phone = document.getElementById("depositPhone").value.trim();
-      const reference = document.getElementById("depositReference").value.trim();
+      const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+      const result = document.getElementById("depositFormMessage");
+      submitButton.disabled = true;
+      result.textContent = "Submitting deposit request...";
 
-      const { error } = await supabaseClient
-        .from("manual_deposit_requests")
-        .insert({
-          user_id: currentUser.id,
-          amount,
-          payment_method: method,
-          phone_number: phone,
-          transaction_id: reference,
-          status: "pending"
-        });
+      try {
+        if (!currentUser) throw new Error("Please sign in first.");
 
-      if (error) throw error;
+        const amount = Number(document.getElementById("depositAmount").value);
+        const method = document.getElementById("depositMethod").value;
+        const phone = document.getElementById("depositPhone").value.trim();
+        const reference = document.getElementById("depositReference").value.trim();
 
-      result.textContent =
-        "Deposit submitted. Your payment will be credited after an administrator verifies and approves it.";
+        const { error } = await supabaseClient
+          .from("manual_deposit_requests")
+          .insert({
+            user_id: currentUser.id,
+            amount,
+            payment_method: method,
+            phone_number: phone,
+            transaction_id: reference,
+            status: "pending"
+          });
 
-      event.currentTarget.reset();
-    } catch (error) {
-      console.error("Deposit submission failed:", error);
-      result.textContent = error.message || "Could not submit deposit.";
-    } finally {
-      submitButton.disabled = false;
-    }
-  });
+        if (error) throw error;
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  return;
+        result.textContent =
+          "Deposit submitted. An administrator must verify and approve your payment.";
+
+        event.currentTarget.reset();
+      } catch (error) {
+        console.error("Deposit submission failed:", error);
+        result.textContent = error.message || "Could not submit deposit.";
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
   }
+
   
   if (section === "withdraw") {
     message.classList.add("active");
