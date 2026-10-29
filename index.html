@@ -9,6 +9,59 @@
 <title>VESTORA — Invest Today, Grow Tomorrow</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+/* VESTORA deposit payment cards */
+.deposit-card {
+  padding: 18px;
+  margin: 15px 0;
+  border-radius: 16px;
+  border: 2px solid transparent;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.deposit-card h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.deposit-number {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 12px 0;
+}
+
+.mtn-card {
+  background: #fff7cc;
+  border-color: #ffcc00;
+  color: #222;
+}
+
+.mtn-card button {
+  background: #ffcc00;
+  color: #222;
+}
+
+.airtel-card {
+  background: #fde8e8;
+  border-color: #e31e24;
+  color: #222;
+}
+
+.airtel-card button {
+  background: #e31e24;
+  color: #fff;
+}
+
+.deposit-card button {
+  border: none;
+  border-radius: 9px;
+  padding: 12px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
 <style>
   
 /* VESTORA REDEEM CODE FORM */
@@ -940,10 +993,30 @@ async function go(section) {
   }
 
   const content = {
-    deposit: {
-      title: "💳 Deposit",
-      text: "Contact support for deposit instructions."
-    },
+    
+deposit: {
+  title: "💳 Deposit",
+  text: `
+    <div class="deposit-card mtn-card">
+      <h3>🟡 MTN Mobile Money</h3>
+      <p class="deposit-number">0791592637</p>
+      <p>Registered name: SABITI. FRANK</p>
+      <button onclick="copyDepositNumber('0791592637')">
+        Copy MTN Number
+      </button>
+    </div>
+
+    <div class="deposit-card airtel-card">
+      <h3>🔴 Airtel Money</h3>
+      <p class="deposit-number">0707728435</p>
+      <p>Registered name: BAKASHABARUHANGA ASA</p>
+      <button onclick="copyDepositNumber('0707728435')">
+        Copy Airtel Number
+      </button>
+    </div>
+  `
+},
+
     withdraw: {
       title: "💸 Withdraw",
       text: "Withdrawal requests are not connected yet."
