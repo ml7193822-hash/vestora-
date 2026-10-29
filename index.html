@@ -906,7 +906,16 @@ async function loadAdminDashboard() {
       if (element) element.textContent = value;
     };
 
-    setText("adminUsers", users.length.toLocaleString("en-UG"));
+    const countResult = await supabaseClient.rpc(
+  "vestora_admin_user_count"
+);
+
+if (countResult.error) throw countResult.error;
+
+setText(
+  "adminUsers",
+  Number(countResult.data).toLocaleString("en-UG")
+);
     setText(
       "adminBalance",
       money(users.reduce((sum, user) => sum + Number(user.balance || 0), 0))
