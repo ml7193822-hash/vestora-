@@ -800,6 +800,7 @@ async function go(section) {
     text: "This section is being prepared."
   };
   if (section === "deposit") {
+    message.classList.add("active");
   document.getElementById("messageTitle").textContent = "💳 Deposit";
   document.getElementById("messageText").textContent = "";
 
