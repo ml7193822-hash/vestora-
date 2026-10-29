@@ -1354,8 +1354,82 @@ deposit: {
         "UGX " + receive.toLocaleString("en-UG");
     });
 
+    
     document.getElementById("withdrawForm").addEventListener(
-      "submit", event => {
+      "submit", async event => {
+        event.preventDefault();
+
+        const result = document.getElementById("withdrawFormMessage");
+        const amount = Number(amountInput.value);
+        const method = document.querySelector(
+          'input[name="withdrawMethod"]:checked'
+        )?.value;
+        const phone = document.getElementById("withdrawPhone").value.trim();
+        const submitButton = event.currentTarget.querySelector(
+          'button[type="submit"]'
+        );
+
+        if (!currentUser) {
+          result.textContent = "Please sign in to request a withdrawal.";
+          return;
+        }
+
+        if (!method || !phone || !Number.isFinite(amount) || amount < 5000) {
+          result.textContent =
+            "Choose a payment method, enter your phone number, and enter at least UGX 5,000.";
+          return;
+        }
+
+        submitButton.disabled = true;
+        result.textContent = "Checking eligibility and submitting request...";
+
+        try {
+          const { data, error } = await supabaseClient.rpc(
+            "submit_vestora_withdrawal",
+            {
+              p_amount: amount,
+              p_method: method,
+              p_phone: phone
+            }
+          );
+
+          if (error) throw error;
+
+          if (!data || data.success !== true) {
+            throw new Error(data?.message || "Withdrawal request was not accepted.");
+          }
+
+          result.textContent =
+            "✅ Withdrawal request submitted for admin review. " +
+            "Requested: UGX " + Number(data.amount).toLocaleString("en-UG") +
+            "; charge: UGX " + Number(data.fee).toLocaleString("en-UG") +
+            "; you receive: UGX " + Number(data.net_amount).toLocaleString("en-UG") +
+            ". Status: Pending.";
+
+          event.currentTarget.reset();
+          amountInput.dispatchEvent(new Event("input"));
+
+          const { data: profile, error: balanceError } = await supabaseClient
+            .from("profiles")
+            .select("balance")
+            .eq("id", currentUser.id)
+            .single();
+
+          if (!balanceError && profile) {
+            document.getElementById("withdrawAvailableBalance").textContent =
+              "UGX " + Number(profile.balance || 0).toLocaleString("en-UG");
+          }
+        } catch (error) {
+          console.error("Withdrawal request failed:", error);
+          result.textContent =
+            error.message || "Could not submit withdrawal request. Please try again.";
+        } finally {
+          submitButton.disabled = false;
+        }
+      }
+    );
+
+      "submit", async event => {
         event.preventDefault();
 
         const result = document.getElementById("withdrawFormMessage");
@@ -1376,8 +1450,34 @@ deposit: {
           return;
         }
 
-        result.textContent =
-          "The design is ready, but withdrawal requests are not connected to the database yet. No request has been submitted.";
+        
+        result.textContent = "Checking your package purchases...";
+
+        try {
+          const { data: purchase, error } = await supabaseClient
+            .from("product_purchases")
+            .select("id")
+            .eq("user_id", currentUser.id)
+            .eq("status", "approved")
+            .limit(1)
+            .maybeSingle();
+
+          if (error) throw error;
+
+          if (!purchase) {
+            result.textContent =
+              "Withdrawal unavailable. You must purchase and have an approved investment package before withdrawing.";
+            return;
+          }
+
+          result.textContent =
+            "You have an approved package. Withdrawal submission still needs to be connected to the database.";
+        } catch (error) {
+          console.error("Package purchase check failed:", error);
+          result.textContent =
+            "We could not verify your package purchase. Please try again later.";
+        }
+
       }
     );
 
