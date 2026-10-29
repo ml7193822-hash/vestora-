@@ -264,7 +264,8 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
   <button class="nav-btn" data-page="redeem" onclick="go('redeem')"><span class="nav-icon">🎟</span>Redeem Codes</button>
   <button class="nav-btn" data-page="support" onclick="go('support')"><span class="nav-icon">☏</span>Support</button>
   
-<button class="nav-btn admin-nav" id="adminNav" onclick="go('admin')">
+<button class="nav-btn admin-nav" id="adminNav"
+  onclick="go('admin')" hidden>
   <span class="nav-icon">⚙</span> Admin Dashboard
 </button>
 
@@ -354,14 +355,16 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
 </div>
 
 <!-- ADMIN ONLY: MANAGE REDEEM CODES -->
+
 <button
   type="button"
   id="adminRedeemCodesButton"
   onclick="go('adminRedeemCodes')"
-  style="display:none;"
+  hidden
 >
   Manage Redeem Codes
 </button>
+
 
 <div id="adminPanel" class="panel">
   <h2>VESTORA Admin Dashboard</h2>
@@ -669,8 +672,7 @@ function toggleMenu() {
 
 
 
-
-function go(section) {
+async function go(section) {
   if (!currentUser) {
     authSection.hidden = false;
     appView.hidden = true;
@@ -681,20 +683,35 @@ function go(section) {
   const message = document.getElementById("messagePanel");
   const redeem = document.getElementById("redeemPanel");
   const admin = document.getElementById("adminPanel");
+  const adminRedeem = document.getElementById("adminRedeemCodesPanel");
   const sidebar = document.getElementById("sidebar");
 
-  home.hidden = true;
-  message.classList.remove("active");
-  redeem.classList.remove("active");
+  // Check administrator permission before opening protected pages
+  if (section === "admin" || section === "adminRedeemCodes") {
+    const allowed = await checkAdminAccess();
 
-  if (admin) admin.classList.remove("active");
+    if (!allowed) {
+      alert("Access denied. Administrator account only.");
+      section = "dashboard";
+    }
+  }
+
+  home.hidden = true;
+
+  document.querySelectorAll(".panel").forEach(panel => {
+    panel.classList.remove("active");
+  });
 
   document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
     button.classList.toggle("active", button.dataset.page === section);
   });
 
-  sidebar.classList.remove("open");
-  document.getElementById("menuToggle").setAttribute("aria-expanded", "false");
+  if (sidebar) sidebar.classList.remove("open");
+
+  const menuToggle = document.getElementById("menuToggle");
+  if (menuToggle) {
+    menuToggle.setAttribute("aria-expanded", "false");
+  }
 
   if (section === "dashboard") {
     home.hidden = false;
@@ -716,25 +733,27 @@ function go(section) {
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
-if (section === 'adminRedeemCodes') {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('adminRedeemCodesPanel').classList.add('active');
-  loadAdminRedeemCodes();
-  return;
-}
-  if (section === "admin") {
-    if (admin) {
-      admin.classList.add("active");
-      loadAdminDashboard();
-    } else {
-      message.classList.add("active");
-      document.getElementById("messageTitle").textContent =
-        "Admin Dashboard";
-      document.getElementById("messageText").textContent =
-        "Admin panel is unavailable.";
-      document.getElementById("messageExtra").replaceChildren();
+
+  if (section === "adminRedeemCodes") {
+    if (!vestoraIsAdmin) {
+      alert("Access denied.");
+      return;
     }
 
+    adminRedeem.classList.add("active");
+    loadAdminRedeemCodes();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  if (section === "admin") {
+    if (!vestoraIsAdmin) {
+      alert("Access denied.");
+      return;
+    }
+
+    admin.classList.add("active");
+    loadAdminDashboard();
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
@@ -783,7 +802,6 @@ if (section === 'adminRedeemCodes') {
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-
 
 const productPlans = {
   V1:{ amount:20000, daily:5000, duration:15, total:75000 },
