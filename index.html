@@ -790,6 +790,79 @@ async function go(section) {
     title: "VESTORA",
     text: "This section is being prepared."
   };
+  if (section === "deposit") {
+  document.getElementById("messageTitle").textContent = "💳 Deposit";
+  document.getElementById("messageText").textContent = "";
+
+  const extra = document.getElementById("messageExtra");
+
+  extra.innerHTML = `
+    <form id="manualDepositForm">
+      <label>Payment method</label>
+      <select id="depositMethod" required>
+        <option value="">Choose Mobile Money</option>
+        <option value="MTN Mobile Money">MTN Mobile Money</option>
+        <option value="Airtel Money">Airtel Money</option>
+      </select>
+
+      <label>Amount (UGX)</label>
+      <input id="depositAmount" type="number" min="1000" step="1000" required>
+
+      <label>Sender's Mobile Money number</label>
+      <input id="depositPhone" type="tel" required>
+
+      <label>Transaction reference</label>
+      <input id="depositReference" type="text" required>
+
+      <button type="submit">Submit Deposit</button>
+      <p id="depositFormMessage"></p>
+    </form>
+  `;
+
+  document.getElementById("manualDepositForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    const result = document.getElementById("depositFormMessage");
+    submitButton.disabled = true;
+    result.textContent = "Submitting deposit request...";
+
+    try {
+      if (!currentUser) throw new Error("Please sign in first.");
+
+      const amount = Number(document.getElementById("depositAmount").value);
+      const method = document.getElementById("depositMethod").value;
+      const phone = document.getElementById("depositPhone").value.trim();
+      const reference = document.getElementById("depositReference").value.trim();
+
+      const { error } = await supabaseClient
+        .from("manual_deposit_requests")
+        .insert({
+          user_id: currentUser.id,
+          amount,
+          payment_method: method,
+          phone_number: phone,
+          transaction_id: reference,
+          status: "pending"
+        });
+
+      if (error) throw error;
+
+      result.textContent =
+        "Deposit submitted. Your payment will be credited after an administrator verifies and approves it.";
+
+      event.currentTarget.reset();
+    } catch (error) {
+      console.error("Deposit submission failed:", error);
+      result.textContent = error.message || "Could not submit deposit.";
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  return;
+  }
 
   document.getElementById("messageTitle").textContent = item.title;
   document.getElementById("messageText").textContent = item.text;
