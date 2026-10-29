@@ -1151,59 +1151,240 @@ deposit: {
   }
 
   
+  
   if (section === "withdraw") {
     message.classList.add("active");
-
     document.getElementById("messageTitle").textContent = "💸 Withdraw";
-    document.getElementById("messageText").textContent =
-      "Enter your withdrawal details carefully.";
+    document.getElementById("messageText").textContent = "";
 
     const extra = document.getElementById("messageExtra");
 
     extra.innerHTML = `
-      <form id="withdrawForm">
-        <label>Withdrawal method</label>
-        <select id="withdrawMethod" required>
-          <option value="">Choose Mobile Money</option>
-          <option value="MTN Mobile Money">MTN Mobile Money</option>
-          <option value="Airtel Money">Airtel Money</option>
-        </select>
+      <style>
+        .withdraw-page { color:#064e3b; font-family:Arial,sans-serif; }
+        .withdraw-hero {
+          background:linear-gradient(125deg,#064e3b,#059669);
+          color:white; padding:24px 18px; border-radius:20px;
+          margin:12px 0 18px;
+        }
+        .withdraw-hero h2 { margin:0 0 10px; font-size:27px; }
+        .withdraw-hero p { margin:0; line-height:1.6; }
+        .withdraw-balance {
+          background:#eafaf3; border:1px solid #b8ead6;
+          padding:18px; border-radius:16px; margin-bottom:18px;
+        }
+        .withdraw-balance strong { font-size:23px; display:block; margin-top:8px; }
+        .withdraw-box {
+          background:white; border:1px solid #e0eee7;
+          border-radius:18px; padding:18px;
+          box-shadow:0 5px 20px rgba(6,78,59,.07);
+        }
+        .withdraw-box label {
+          display:block; font-weight:700; margin:17px 0 8px;
+        }
+        .withdraw-box input, .withdraw-box select {
+          box-sizing:border-box; width:100%; padding:14px;
+          border:1px solid #cbded6; border-radius:11px;
+          background:#fff; color:#123b30; font-size:16px;
+        }
+        .withdraw-methods {
+          display:grid; grid-template-columns:1fr 1fr;
+          gap:10px; margin-top:8px;
+        }
+        .withdraw-method {
+          display:flex; align-items:center; gap:8px;
+          border:1px solid #d8e8e0; border-radius:12px;
+          padding:12px 8px; background:#f8fffb;
+          font-weight:700; font-size:14px;
+        }
+        .withdraw-method input { width:auto; }
+        .withdraw-rules {
+          display:grid; grid-template-columns:1fr;
+          gap:10px; margin-top:16px;
+        }
+        .withdraw-rule {
+          border-radius:13px; padding:15px;
+          background:#effaf5; border:1px solid #c9eddd;
+        }
+        .withdraw-rule strong { display:block; margin-bottom:6px; }
+        .withdraw-rule p { margin:4px 0; line-height:1.5; }
+        .withdraw-fee {
+          background:#eef5ff; border-color:#c8dcff;
+        }
+        .withdraw-min {
+          background:#fff7e5; border-color:#ffe1a1;
+        }
+        .withdraw-submit {
+          width:100%; border:0; border-radius:13px;
+          padding:16px; margin-top:20px;
+          background:linear-gradient(100deg,#047857,#059669);
+          color:white; font-size:17px; font-weight:800;
+          cursor:pointer;
+        }
+        .withdraw-note {
+          margin-top:15px; padding:14px; border-radius:12px;
+          background:#fff8e8; color:#654a13; line-height:1.6;
+        }
+        .withdraw-result { margin-top:12px; line-height:1.5; }
+        @media(min-width:650px) {
+          .withdraw-rules { grid-template-columns:repeat(3,1fr); }
+        }
+      </style>
 
-        <label>Withdrawal amount (UGX)</label>
-        <input
-          id="withdrawAmount"
-          type="number"
-          min="2000"
-          step="1000"
-          placeholder="Enter amount"
-          required
-        >
+      <div class="withdraw-page">
+        <div class="withdraw-hero">
+          <h2>🌿 Withdraw Funds</h2>
+          <p>Request your money through Mobile Money.
+          Your request will be reviewed by the VESTORA admin team.</p>
+        </div>
 
-        <label>Receiving Mobile Money number</label>
-        <input
-          id="withdrawPhone"
-          type="tel"
-          placeholder="e.g. 0771234567"
-          required
-        >
+        <div class="withdraw-balance">
+          <span>💰 Available Balance</span>
+          <strong id="withdrawAvailableBalance">Checking balance...</strong>
+          <span>Minimum withdrawal: UGX 5,000</span>
+        </div>
 
-        <button type="submit">Submit Withdrawal Request</button>
-        <p id="withdrawFormMessage" class="result"></p>
-      </form>
+        <div class="withdraw-box">
+          <h3>Withdrawal Details</h3>
+
+          <form id="withdrawForm">
+            <label>📱 Select Withdrawal Method</label>
+            <div class="withdraw-methods">
+              <label class="withdraw-method">
+                <input type="radio" name="withdrawMethod"
+                  value="MTN Mobile Money" required>
+                🟡 MTN Mobile Money
+              </label>
+              <label class="withdraw-method">
+                <input type="radio" name="withdrawMethod"
+                  value="Airtel Money" required>
+                🔴 Airtel Money
+              </label>
+            </div>
+
+            <label for="withdrawAmount">💵 Amount (UGX)</label>
+            <input id="withdrawAmount" type="number"
+              min="5000" step="1000"
+              placeholder="Enter amount (minimum 5000)" required>
+
+            <label for="withdrawPhone">📲 Receiving Mobile Money Number</label>
+            <input id="withdrawPhone" type="tel"
+              placeholder="e.g. 0771234567" required>
+
+            <div class="withdraw-rule withdraw-fee" style="margin-top:16px">
+              <strong>🧾 Withdrawal Summary</strong>
+              <p>Requested amount: <b id="withdrawRequested">UGX 0</b></p>
+              <p>Withdrawal charge (10%): <b id="withdrawCharge">UGX 0</b></p>
+              <p>You receive: <b id="withdrawReceive">UGX 0</b></p>
+            </div>
+
+            <button class="withdraw-submit" type="submit">
+              ➤ Submit Withdrawal Request
+            </button>
+
+            <p id="withdrawFormMessage" class="withdraw-result"></p>
+          </form>
+
+          <div class="withdraw-rules">
+            <div class="withdraw-rule">
+              <strong>🕒 Withdraw Rules</strong>
+              <p>Days: Monday to Monday</p>
+              <p>Hours: 8:00 AM – 5:00 PM</p>
+            </div>
+
+            <div class="withdraw-rule withdraw-fee">
+              <strong>％ Withdrawal Charges</strong>
+              <p style="font-size:25px;font-weight:800">10%</p>
+              <p>The charge is deducted from the requested amount.</p>
+            </div>
+
+            <div class="withdraw-rule withdraw-min">
+              <strong>💰 Minimum Withdrawal</strong>
+              <p style="font-size:22px;font-weight:800">UGX 5,000</p>
+            </div>
+          </div>
+
+          <div class="withdraw-note">
+            <strong>ℹ️ Important Information</strong>
+            <p>• Requests are subject to admin review.</p>
+            <p>• Please check your Mobile Money number carefully.</p>
+            <p>• Your request is not a completed payment until it is processed.</p>
+          </div>
+        </div>
+      </div>
     `;
 
+    // Display the signed-in user's current profile balance.
+    const balanceDisplay =
+      document.getElementById("withdrawAvailableBalance");
+
+    if (currentUser) {
+      supabaseClient
+        .from("profiles")
+        .select("balance")
+        .eq("id", currentUser.id)
+        .single()
+        .then(({ data, error }) => {
+          if (error) {
+            balanceDisplay.textContent = "Unable to load balance";
+            console.error("Withdrawal balance load failed:", error);
+            return;
+          }
+
+          balanceDisplay.textContent =
+            "UGX " + Number(data.balance || 0).toLocaleString("en-UG");
+        });
+    } else {
+      balanceDisplay.textContent = "Please sign in";
+    }
+
+    // Calculate the 10% charge as the amount changes.
+    const amountInput = document.getElementById("withdrawAmount");
+
+    amountInput.addEventListener("input", () => {
+      const amount = Math.max(0, Number(amountInput.value) || 0);
+      const fee = Math.round(amount * 0.10);
+      const receive = amount - fee;
+
+      document.getElementById("withdrawRequested").textContent =
+        "UGX " + amount.toLocaleString("en-UG");
+      document.getElementById("withdrawCharge").textContent =
+        "UGX " + fee.toLocaleString("en-UG");
+      document.getElementById("withdrawReceive").textContent =
+        "UGX " + receive.toLocaleString("en-UG");
+    });
+
     document.getElementById("withdrawForm").addEventListener(
-      "submit",
-      event => {
+      "submit", event => {
         event.preventDefault();
-        document.getElementById("withdrawFormMessage").textContent =
-          "The withdrawal form is ready. Request submission must be connected to the VESTORA database before requests can be processed.";
+
+        const result = document.getElementById("withdrawFormMessage");
+        const amount = Number(amountInput.value);
+        const method = document.querySelector(
+          'input[name="withdrawMethod"]:checked'
+        )?.value;
+        const phone = document.getElementById("withdrawPhone").value.trim();
+
+        if (!currentUser) {
+          result.textContent = "Please sign in to request a withdrawal.";
+          return;
+        }
+
+        if (!method || !phone || amount < 5000) {
+          result.textContent =
+            "Choose a payment method, enter your number, and enter at least UGX 5,000.";
+          return;
+        }
+
+        result.textContent =
+          "The design is ready, but withdrawal requests are not connected to the database yet. No request has been submitted.";
       }
     );
 
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
+
 
 
   document.getElementById("messageTitle").textContent = item.title;
