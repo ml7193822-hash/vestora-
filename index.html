@@ -1429,57 +1429,7 @@ deposit: {
       }
     );
 
-      "submit", async event => {
-        event.preventDefault();
-
-        const result = document.getElementById("withdrawFormMessage");
-        const amount = Number(amountInput.value);
-        const method = document.querySelector(
-          'input[name="withdrawMethod"]:checked'
-        )?.value;
-        const phone = document.getElementById("withdrawPhone").value.trim();
-
-        if (!currentUser) {
-          result.textContent = "Please sign in to request a withdrawal.";
-          return;
-        }
-
-        if (!method || !phone || amount < 5000) {
-          result.textContent =
-            "Choose a payment method, enter your number, and enter at least UGX 5,000.";
-          return;
-        }
-
-        
-        result.textContent = "Checking your package purchases...";
-
-        try {
-          const { data: purchase, error } = await supabaseClient
-            .from("product_purchases")
-            .select("id")
-            .eq("user_id", currentUser.id)
-            .eq("status", "approved")
-            .limit(1)
-            .maybeSingle();
-
-          if (error) throw error;
-
-          if (!purchase) {
-            result.textContent =
-              "Withdrawal unavailable. You must purchase and have an approved investment package before withdrawing.";
-            return;
-          }
-
-          result.textContent =
-            "You have an approved package. Withdrawal submission still needs to be connected to the database.";
-        } catch (error) {
-          console.error("Package purchase check failed:", error);
-          result.textContent =
-            "We could not verify your package purchase. Please try again later.";
-        }
-
-      }
-    );
+    
 
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
