@@ -1576,7 +1576,7 @@ setText(
         .includes(String(item.status || "").toLowerCase())
     );
 
-    setText(
+    setText(⁸
       "adminDeposits",
       money(completedDeposits.reduce(
         (sum, item) => sum + Number(item.amount || 0), 0
@@ -1667,7 +1667,13 @@ setText(
     setText("adminWithdrawals", "Not connected");
     setText("adminPendingWithdrawals", "Not connected");
     setText("adminInvestmentCount", "Not connected");
-    setText("adminEarnings", "Not connected");
+    const earningsResult = await supabaseClient.rpc(
+  "vestora_admin_total_earnings"
+);
+
+if (earningsResult.error) throw earningsResult.error;
+
+setText("adminEarnings", money(earningsResult.data));
 
     renderTable("adminWithdrawalsTable",
       ["Status"], [["Withdrawal table not configured"]]);
