@@ -1666,7 +1666,7 @@ return;
         `).join("") : "<p>No transactions found yet.</p>"}
       </div>
     `;
-  } catch (error) {
+    } catch (error) {
     console.error("Transaction history error:", error);
     extra.textContent = error.message || "Could not load transaction history.";
   }
