@@ -1502,6 +1502,7 @@ async function checkAdminAccess() {
 
 
 
+
 async function loadAdminDashboard() {
   const message = document.getElementById("adminMessage");
   if (!message) return;
@@ -1519,33 +1520,45 @@ async function loadAdminDashboard() {
 
     message.textContent = "Loading records...";
 
-    const [usersResult, purchasesResult, depositsResult] =
-      await Promise.all([
-        supabaseClient
-          .from("profiles")
-          .select("id, full_name, role, balance, created_at")
-          .order("created_at", { ascending: false })
-          .limit(100),
+    const [
+      usersResult,
+      purchasesResult,
+      depositsResult,
+      manualResult
+    ] = await Promise.all([
+      supabaseClient
+        .from("profiles")
+        .select("id, full_name, role, balance, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100),
 
-        supabaseClient
-          .from("product_purchases")
-          .select("user_id, amount_paid, status, purchased_at")
-          .order("purchased_at", { ascending: false })
-          .limit(100),
+      supabaseClient
+        .from("product_purchases")
+        .select("user_id, amount_paid, status, purchased_at")
+        .order("purchased_at", { ascending: false })
+        .limit(100),
 
-        supabaseClient
-          .from("pawapay_deposits")
-          .select("user_id, amount, status, created_at")
-          .limit(1000)
-      ]);
+      supabaseClient
+        .from("pawapay_deposits")
+        .select("user_id, amount, status, created_at")
+        .limit(1000),
+
+      supabaseClient
+        .from("manual_deposit_requests")
+        .select("id, user_id, amount, phone_number, payment_method, transaction_id, status, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100)
+    ]);
 
     if (usersResult.error) throw usersResult.error;
     if (purchasesResult.error) throw purchasesResult.error;
     if (depositsResult.error) throw depositsResult.error;
+    if (manualResult.error) throw manualResult.error;
 
     const users = usersResult.data || [];
     const purchases = purchasesResult.data || [];
     const deposits = depositsResult.data || [];
+    const manualDeposits = manualResult.data || [];
 
     const money = value =>
       "UGX " + Number(value || 0).toLocaleString("en-UG");
@@ -1555,35 +1568,60 @@ async function loadAdminDashboard() {
       if (element) element.textContent = value;
     };
 
+    // Total users
     const countResult = await supabaseClient.rpc(
-  "vestora_admin_user_count"
-);
+      "vestora_admin_user_count"
+    );
 
-if (countResult.error) throw countResult.error;
+    if (countResult.error) throw countResult.error;
 
-setText(
-  "adminUsers",
-  Number(countResult.data).toLocaleString("en-UG")
-);
+    setText(
+      "adminUsers",
+      Number(countResult.data).toLocaleString("en-UG")
+    );
+
+    // Total account balances
     setText(
       "adminBalance",
-      money(users.reduce((sum, user) => sum + Number(user.balance || 0), 0))
-    );
-    setText("adminPurchases", purchases.length.toLocaleString("en-UG"));
-
-    // Only completed deposits count as received.
-    const completedDeposits = deposits.filter(item =>
-      ["success", "successful", "completed", "accepted"]
-        .includes(String(item.status || "").toLowerCase())
-    );
-
-    setText(
-      "adminDeposits",
-      money(completedDeposits.reduce(
-        (sum, item) => sum + Number(item.amount || 0), 0
+      money(users.reduce(
+        (sum, user) => sum + Number(user.balance || 0), 0
       ))
     );
 
+    setText(
+      "adminPurchases",
+      purchases.length.toLocaleString("en-UG")
+    );
+
+    // Deposit totals: successful PawaPay + approved manual deposits
+    const successfulStatuses = [
+      "success",
+      "successful",
+      "completed",
+      "accepted"
+    ];
+
+    const completedPawaPay = deposits.filter(item =>
+      successfulStatuses.includes(
+        String(item.status || "").toLowerCase()
+      )
+    );
+
+    const approvedManual = manualDeposits.filter(item =>
+      String(item.status || "").toLowerCase() === "approved"
+    );
+
+    const totalDeposits =
+      completedPawaPay.reduce(
+        (sum, item) => sum + Number(item.amount || 0), 0
+      ) +
+      approvedManual.reduce(
+        (sum, item) => sum + Number(item.amount || 0), 0
+      );
+
+    setText("adminDeposits", money(totalDeposits));
+
+    // General table renderer
     const renderTable = (id, headers, rows) => {
       const target = document.getElementById(id);
       if (!target) return;
@@ -1615,11 +1653,13 @@ setText(
       } else {
         rows.forEach(values => {
           const row = document.createElement("tr");
+
           values.forEach(value => {
             const cell = document.createElement("td");
             cell.textContent = String(value ?? "");
             row.appendChild(cell);
           });
+
           tbody.appendChild(row);
         });
       }
@@ -1628,6 +1668,7 @@ setText(
       target.appendChild(table);
     };
 
+    // Users
     renderTable(
       "adminUsersTable",
       ["Name", "Email/ID", "Balance", "Role"],
@@ -1639,6 +1680,7 @@ setText(
       ])
     );
 
+    // Product purchases
     renderTable(
       "adminPurchasesTable",
       ["User ID", "Amount", "Status", "Date"],
@@ -1652,43 +1694,170 @@ setText(
       ])
     );
 
-    renderTable(
-      "adminDepositsTable",
-      ["User ID", "Amount", "Status", "Date"],
-      deposits.map(item => [
-        item.user_id,
-        money(item.amount),
-        item.status || "unknown",
-        item.created_at
-          ? new Date(item.created_at).toLocaleDateString()
-          : ""
-      ])
-    );
+    // Manual deposit requests with approval buttons
+    const depositTarget = document.getElementById("adminDepositsTable");
 
+    if (depositTarget) {
+      depositTarget.replaceChildren();
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      [
+        "Customer",
+        "Method",
+        "Phone",
+        "Transaction Reference",
+        "Amount",
+        "Status",
+        "Action"
+      ].forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      if (!manualDeposits.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 7;
+        cell.textContent = "No manual deposit requests found.";
+        row.appendChild(cell);
+        tbody.appendChild(row);
+      }
+
+      manualDeposits.forEach(item => {
+        const row = document.createElement("tr");
+
+        const customer = users.find(
+          user => user.id === item.user_id
+        );
+
+        const values = [
+          customer?.full_name || item.user_id,
+          item.payment_method || "",
+          item.phone_number || "",
+          item.transaction_id || "",
+          money(item.amount),
+          item.status || "pending"
+        ];
+
+        values.forEach(value => {
+          const cell = document.createElement("td");
+          cell.textContent = String(value ?? "");
+          row.appendChild(cell);
+        });
+
+        const actionCell = document.createElement("td");
+
+        if (
+          String(item.status || "").toLowerCase() === "pending"
+        ) {
+          const approveButton = document.createElement("button");
+
+          approveButton.textContent = "Approve";
+          approveButton.type = "button";
+
+          approveButton.onclick = async () => {
+            if (!confirm(
+              "Verify this payment and approve UGX " +
+              Number(item.amount).toLocaleString("en-UG") +
+              " for this customer?"
+            )) {
+              return;
+            }
+
+            approveButton.disabled = true;
+            approveButton.textContent = "Processing...";
+
+            try {
+              const { data, error } = await supabaseClient.rpc(
+                "approve_vestora_manual_deposit",
+                {
+                  p_deposit_id: item.id
+                }
+              );
+
+              if (error) throw error;
+
+              if (!data || data.success !== true) {
+                throw new Error("Deposit approval was not confirmed.");
+              }
+
+              alert(
+                "Deposit approved successfully!\nCredited: " +
+                money(data.amount)
+              );
+
+              await loadAdminDashboard();
+
+            } catch (error) {
+              console.error("Deposit approval failed:", error);
+
+              alert("Approval failed: " + error.message);
+
+              approveButton.disabled = false;
+              approveButton.textContent = "Approve";
+            }
+          };
+
+          actionCell.appendChild(approveButton);
+
+        } else {
+          actionCell.textContent = "Processed";
+        }
+
+        row.appendChild(actionCell);
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      depositTarget.appendChild(table);
+    }
+
+    // Withdrawals and investments
     setText("adminWithdrawals", "Not connected");
     setText("adminPendingWithdrawals", "Not connected");
     setText("adminInvestmentCount", "Not connected");
+
+    renderTable(
+      "adminWithdrawalsTable",
+      ["Status"],
+      [["Withdrawal table not configured"]]
+    );
+
+    renderTable(
+      "adminInvestmentsTable",
+      ["Status"],
+      [["Investment table not connected yet"]]
+    );
+
+    // Earnings
     const earningsResult = await supabaseClient.rpc(
-  "vestora_admin_total_earnings"
-);
+      "vestora_admin_total_earnings"
+    );
 
-if (earningsResult.error) throw earningsResult.error;
+    if (earningsResult.error) throw earningsResult.error;
 
-setText("adminEarnings", money(earningsResult.data));
-
-    renderTable("adminWithdrawalsTable",
-      ["Status"], [["Withdrawal table not configured"]]);
-    renderTable("adminInvestmentsTable",
-      ["Status"], [["Investment table not connected yet"]]);
+    setText("adminEarnings", money(earningsResult.data));
 
     message.textContent =
-      "Dashboard loaded. Deposit totals include only recognized successful statuses. Up to 100 users and purchases are shown.";
+      "Dashboard loaded successfully. Manual deposits, PawaPay, users, purchases and earnings loaded.";
+
   } catch (error) {
     console.error("Admin dashboard loading error:", error);
+
     message.textContent =
-      "Could not load records. Check Supabase permissions and table access.";
+      "Could not load records: " + error.message;
   }
 }
+
 async function createAdminRedeemCode() {
 const code = document.getElementById("adminRedeemCode").value.trim().toUpperCase();
 const amount = Number(document.getElementById("adminRedeemAmount").value);
