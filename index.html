@@ -2505,6 +2505,10 @@ async function confirmVestoraPurchase() {
     button.textContent = "Try Again";
   }
 }
+  function closePurchaseModal() {
+  document.getElementById("purchaseModal").classList.remove("active");
+  selectedPurchasePlan = null;
+  }
 
 document.getElementById("confirmPurchaseButton")
   .addEventListener("click", confirmVestoraPurchase);
@@ -3107,6 +3111,7 @@ checkLoginSession();
     <button id="confirmPurchaseButton"
       class="purchase-confirm-button"
       type="button">
+      onclick="confirmVestoraPurchase()"
       Confirm Purchase
     </button>
 
