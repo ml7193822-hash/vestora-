@@ -1664,10 +1664,15 @@ async function loadAdminDashboard() {
         .order("created_at", { ascending: false })
         .limit(100),
 
-      supabaseClient.from("withdrawal_requests")
+            supabaseClient.from("withdrawal_requests")
         .select("id, user_id, amount, withdrawal_fee, net_amount, payment_method, phone_number, status, created_at, refunded_at")
         .order("created_at", { ascending: false })
-        .limit(100)
+        .limit(100),
+
+      supabaseClient.from("daily_profit_credits")
+        .select("id, purchase_id, user_id, profit_date, amount, created_at")
+        .order("profit_date", { ascending: false })
+        .limit(200)
     ]);
 
     if (usersResult.error) throw usersResult.error;
