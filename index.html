@@ -975,6 +975,7 @@ function setSignedIn(user) {
   (async () => {
     await recordReferralIfNeeded();
     await loadReferralInfo();
+    await loadReferralCommissions();
   })();
 }
 
@@ -2970,6 +2971,43 @@ document.getElementById("resetButton")?.addEventListener("click", resetPassword)
 
 checkLoginSession();
   window.loginUser = loginUser;
+  async function loadReferralCommissions() {
+  const totalElement = document.getElementById("referralCommissionTotal");
+  const listElement = document.getElementById("referralCommissionsList");
+
+  if (!currentUser || !totalElement || !listElement) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("referral_commissions")
+      .select("level, amount, status, created_at")
+      .eq("user_id", currentUser.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const commissions = data || [];
+    const total = commissions.reduce(
+      (sum, item) => sum + Number(item.amount || 0), 0
+    );
+
+    totalElement.textContent = "UGX " + total.toLocaleString();
+
+    listElement.innerHTML = commissions.length
+      ? commissions.map(item => `
+          <div class="commission-row">
+            <strong>Level ${Number(item.level)}</strong>
+            <p>UGX ${Number(item.amount).toLocaleString()}</p>
+            <small>Status: ${escapeHtml(item.status)}</small>
+          </div>
+        `).join("")
+      : "No referral commissions yet.";
+
+  } catch (error) {
+    console.error("Commission loading error:", error);
+    listElement.textContent = "Could not load commissions.";
+  }
+  }
 </script>
 </body>
 </html>
