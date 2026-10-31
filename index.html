@@ -825,6 +825,20 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
       </thead>
       <tbody id="adminInvestmentsTable"></tbody>
     </table>
+    <h3>Daily Profit Credits History</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Purchase ID</th>
+      <th>Profit Date</th>
+      <th>Profit Amount</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody id="adminDailyProfitsTable"></tbody>
+</table>
   </div>
 </div>
 <!-- END VESTORA ADMIN DASHBOARD -->
@@ -1686,6 +1700,9 @@ async function loadAdminDashboard() {
     const deposits = depositsResult.data || [];
     const manualDeposits = manualResult.data || [];
     const withdrawals = withdrawalsResult.data || [];
+    if (dailyProfitResult.error) throw dailyProfitResult.error;
+
+const dailyProfits = dailyProfitResult.data || [];
 
     // Load product names
     const productsResult = await supabaseClient
@@ -2173,6 +2190,34 @@ async function loadAdminDashboard() {
         ];
       })
     );
+    // Daily Profit Credits History
+renderTable(
+  "adminDailyProfitsTable",
+  [
+    "Customer",
+    "Purchase ID",
+    "Profit Date",
+    "Profit Amount",
+    "Created At"
+  ],
+  dailyProfits.map(item => {
+    const customer = users.find(
+      user => user.id === item.user_id
+    );
+
+    return [
+      customer?.full_name || item.user_id,
+      item.purchase_id,
+      item.profit_date
+        ? new Date(item.profit_date).toLocaleDateString()
+        : "",
+      money(item.amount),
+      item.created_at
+        ? new Date(item.created_at).toLocaleString()
+        : ""
+    ];
+  })
+);
 
     // Earnings
     const earningsResult = await supabaseClient.rpc(
