@@ -2506,13 +2506,15 @@ async function confirmVestoraPurchase() {
   }
 }
 
-document.getElementById("confirmPurchaseButton").onclick =
-  confirmVestoraPurchase;
+document.getElementById("confirmPurchaseButton")
+  .addEventListener("click", confirmVestoraPurchase);
 
-document.getElementById("cancelPurchaseButton").onclick = () => {
-  document.getElementById("purchaseModal").classList.remove("active");
-  selectedPurchasePlan = null;
-};
+document.getElementById("cancelPurchaseButton")
+  .addEventListener("click", function () {
+    document.getElementById("purchaseModal").classList.remove("active");
+    selectedPurchasePlan = null;
+  });
+  
 
 document.getElementById("registerForm").addEventListener("submit", registerUser);
 
