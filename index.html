@@ -2852,10 +2852,20 @@ async function recordReferralIfNeeded() {
   if (!currentUser) return;
 
   let referrerId = null;
-  try { referrerId = sessionStorage.getItem("vestora_referrer_id"); } catch (_) {}
-  if (!referrerId || referrerId === currentUser.id) return;
 
   try {
+    referrerId = sessionStorage.getItem("vestora_referrer_id");
+  } catch (error) {
+    console.error("Could not read referral storage:", error);
+    return;
+  }
+
+  if (!referrerId || referrerId === currentUser.id) return;
+
+  const referralMessage = document.getElementById("referralMessage");
+
+  try {
+    // Check whether this user was already referred
     const { data: existing, error: lookupError } = await supabaseClient
       .from("referrals")
       .select("id")
@@ -2863,11 +2873,13 @@ async function recordReferralIfNeeded() {
       .limit(1);
 
     if (lookupError) throw lookupError;
+
     if (existing && existing.length > 0) {
       sessionStorage.removeItem("vestora_referrer_id");
       return;
     }
 
+    // Save the referral
     const { error: insertError } = await supabaseClient
       .from("referrals")
       .insert({
@@ -2878,11 +2890,22 @@ async function recordReferralIfNeeded() {
     if (insertError) throw insertError;
 
     sessionStorage.removeItem("vestora_referrer_id");
-    await loadReferralInfo();
+
+    if (typeof loadReferralInfo === "function") {
+      await loadReferralInfo();
+    }
+
+    if (referralMessage) {
+      referralMessage.textContent = "Referral registered successfully!";
+    }
+
   } catch (error) {
-    console.error("Referral registration tracking needs database setup:", error);
-    document.getElementById("referralMessage").textContent =
-      "Your link is ready, but referral tracking needs database permissions and setup.";
+    console.error("Referral tracking error:", error);
+
+    if (referralMessage) {
+      referralMessage.textContent =
+        "Referral tracking failed. Please check database permissions.";
+    }
   }
 }
 
