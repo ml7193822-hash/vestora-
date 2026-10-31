@@ -575,19 +575,80 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
 
 <section id="authSection">
   <h2>🌿 VESTORA Account</h2>
-  <p>Create your account or log in to continue.</p>
-  <form id="registerForm">
-    <div class="field"><label for="fullName">Full name</label><input id="fullName" type="text" placeholder="Enter your full name" autocomplete="name" maxlength="100" required></div>
-    <div class="field"><label for="email">Email address</label><input id="email" type="email" placeholder="Enter your email" autocomplete="email" maxlength="254" required></div>
-    <div class="field"><label for="password">Password</label><input id="password" type="password" placeholder="At least 6 characters" autocomplete="new-password" minlength="6" required></div>
-    <div class="auth-buttons">
-      <button class="primary" id="registerButton" type="submit">Create Account</button>
-      <button class="secondary" id="loginButton" type="button" onclick="loginUser()">Login</button>
-      <button class="secondary" id="resetButton" type="button" onclick="resetPassword()">Forgot Password?</button>
+  <p>Welcome! Choose how you want to continue.</p>
+
+  <div class="auth-buttons">
+    <button class="primary" type="button"
+      onclick="showAuthForm('register')">Register</button>
+
+    <button class="secondary" type="button"
+      onclick="showAuthForm('login')">Login</button>
+  </div>
+
+  <form id="registerForm" hidden>
+    <h3>Create Your Account</h3>
+
+    <div class="field">
+      <label for="fullName">Full name</label>
+      <input id="fullName" type="text"
+        placeholder="Enter your full name"
+        autocomplete="name" maxlength="100" required>
     </div>
+
+    <div class="field">
+      <label for="email">Email address</label>
+      <input id="email" type="email"
+        placeholder="Enter your email"
+        autocomplete="email" maxlength="254" required>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password"
+        placeholder="At least 6 characters"
+        autocomplete="new-password" minlength="6" required>
+    </div>
+
+    <button class="primary" id="registerButton" type="submit">
+      Create Account
+    </button>
+
+    <p>Already registered?
+      <a href="#" onclick="showAuthForm('login'); return false;">Login</a>
+    </p>
   </form>
-  <div id="authMessage" class="toast show" role="status" aria-live="polite">Please create an account or log in.</div>
-  <p class="auth-help">Use an email address you can access. If email confirmation is enabled, confirm your email before logging in.</p>
+
+  <form id="loginForm" hidden>
+    <h3>Welcome Back</h3>
+
+    <div class="field">
+      <label for="loginEmail">Email address</label>
+      <input id="loginEmail" type="email"
+        placeholder="Enter your email"
+        autocomplete="email" required>
+    </div>
+
+    <div class="field">
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" type="password"
+        placeholder="Enter your password"
+        autocomplete="current-password" required>
+    </div>
+
+    <button class="primary" id="loginButton" type="button"
+      onclick="loginUser()">Login</button>
+
+    <button class="secondary" id="resetButton" type="button"
+      onclick="resetPassword()">Forgot Password?</button>
+
+    <p>New to VESTORA?
+      <a href="#" onclick="showAuthForm('register'); return false;">Create Account</a>
+    </p>
+  </form>
+
+  <div id="authMessage" class="toast show" role="status" aria-live="polite">
+    Please register or log in.
+  </div>
 </section>
 
 <div id="appView" hidden>
@@ -1011,23 +1072,48 @@ async function registerUser(event) {
     setBusy(false);
   }
 }
+  document.getElementById("registerForm")
+  .addEventListener("submit", registerUser);
+  function showAuthForm(type) {
+  document.getElementById("registerForm").hidden = type !== "register";
+  document.getElementById("loginForm").hidden = type !== "login";
+
+  document.getElementById("authMessage").textContent =
+    type === "register"
+      ? "Create your VESTORA account."
+      : "Enter your login details.";
+  }
 
 async function loginUser() {
-  
   if (busy) return;
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  if (!email || !password) return showAuthMessage("Enter your email address and password to log in.", true);
+
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  if (!email || !password) {
+    return showAuthMessage(
+      "Enter your email address and password to log in.", true
+    );
+  }
 
   setBusy(true);
   showAuthMessage("Logging in...");
+
   try {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
     if (error) throw error;
+
     setSignedIn(data.user);
     showAuthMessage("Login successful.");
+
   } catch (error) {
     showAuthMessage("Login failed: " + error.message, true);
+
   } finally {
     setBusy(false);
   }
