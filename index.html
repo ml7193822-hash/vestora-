@@ -1619,6 +1619,7 @@ async function checkAdminAccess() {
 
 
 
+
 async function loadAdminDashboard() {
   const message = document.getElementById("adminMessage");
   if (!message) return;
@@ -1650,7 +1651,7 @@ async function loadAdminDashboard() {
         .limit(100),
 
       supabaseClient.from("product_purchases")
-        .select("user_id, amount_paid, status, purchased_at")
+        .select("id, user_id, product_id, amount_paid, status, purchased_at, profit_start_date, profit_end_date, total_profit_paid")
         .order("purchased_at", { ascending: false })
         .limit(100),
 
@@ -1680,6 +1681,15 @@ async function loadAdminDashboard() {
     const deposits = depositsResult.data || [];
     const manualDeposits = manualResult.data || [];
     const withdrawals = withdrawalsResult.data || [];
+
+    // Load product names
+    const productsResult = await supabaseClient
+      .from("products")
+      .select("id, product_name");
+
+    if (productsResult.error) throw productsResult.error;
+
+    const products = productsResult.data || [];
 
     const money = value =>
       "UGX " + Number(value || 0).toLocaleString("en-UG");
@@ -1861,16 +1871,14 @@ async function loadAdminDashboard() {
           user => user.id === item.user_id
         );
 
-        const values = [
+        [
           customer?.full_name || item.user_id,
           item.payment_method || "",
           item.phone_number || "",
           item.transaction_id || "",
           money(item.amount),
           item.status || "pending"
-        ];
-
-        values.forEach(value => {
+        ].forEach(value => {
           const cell = document.createElement("td");
           cell.textContent = String(value ?? "");
           row.appendChild(cell);
@@ -1882,7 +1890,6 @@ async function loadAdminDashboard() {
           String(item.status || "").toLowerCase() === "pending"
         ) {
           const approveButton = document.createElement("button");
-
           approveButton.textContent = "Approve";
           approveButton.type = "button";
 
@@ -1953,7 +1960,7 @@ async function loadAdminDashboard() {
       pendingWithdrawals.length.toLocaleString("en-UG")
     );
 
-    // Withdrawal requests with Approve and Reject buttons
+    // Withdrawal requests
     const withdrawalTarget =
       document.getElementById("adminWithdrawalsTable");
 
@@ -2120,13 +2127,46 @@ async function loadAdminDashboard() {
       withdrawalTarget.appendChild(table);
     }
 
-    // Investments
-    setText("adminInvestmentCount", "Not connected");
+    // Investments table
+    setText(
+      "adminInvestmentCount",
+      purchases.length.toLocaleString("en-UG")
+    );
 
     renderTable(
       "adminInvestmentsTable",
-      ["Status"],
-      [["Investment table not connected yet"]]
+      [
+        "Customer",
+        "Product",
+        "Amount Invested",
+        "Status",
+        "Purchase Date",
+        "Profit End Date",
+        "Total Profit Paid"
+      ],
+      purchases.map(item => {
+        const customer = users.find(
+          user => user.id === item.user_id
+        );
+
+        const product = products.find(
+          product => String(product.id) === String(item.product_id)
+        );
+
+        return [
+          customer?.full_name || item.user_id,
+          product?.product_name || ("Product ID: " + item.product_id),
+          money(item.amount_paid),
+          item.status || "unknown",
+          item.purchased_at
+            ? new Date(item.purchased_at).toLocaleDateString()
+            : "",
+          item.profit_end_date
+            ? new Date(item.profit_end_date).toLocaleDateString()
+            : "",
+          money(item.total_profit_paid)
+        ];
+      })
     );
 
     // Earnings
@@ -2139,7 +2179,7 @@ async function loadAdminDashboard() {
     setText("adminEarnings", money(earningsResult.data));
 
     message.textContent =
-      "Dashboard loaded successfully. Users, purchases, deposits, withdrawals and earnings loaded.";
+      "Dashboard loaded successfully. Users, purchases, deposits, withdrawals, investments and earnings loaded.";
 
   } catch (error) {
     console.error("Admin dashboard loading error:", error);
@@ -2148,6 +2188,7 @@ async function loadAdminDashboard() {
       "Could not load records: " + error.message;
   }
 }
+
 
 
 async function createAdminRedeemCode() {
