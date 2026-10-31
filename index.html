@@ -952,15 +952,22 @@ function setSignedIn(user) {
   }
 
   const name = user.user_metadata?.full_name || user.email || "User";
+
   document.getElementById("userName").textContent = name;
   document.getElementById("welcomeName").textContent = name;
+
   authSection.hidden = true;
   appView.hidden = false;
+
   go("dashboard");
-checkAdminAccess();
-loadProfile();
-loadReferralInfo();
-recordReferralIfNeeded();
+  checkAdminAccess();
+
+  loadProfile();
+
+  (async () => {
+    await recordReferralIfNeeded();
+    await loadReferralInfo();
+  })();
 }
 
 async function registerUser(event) {
