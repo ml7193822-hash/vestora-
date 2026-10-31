@@ -2911,7 +2911,7 @@ async function recordReferralIfNeeded() {
 
     if (referralMessage) {
       referralMessage.textContent =
-        "Referral tracking failed. Please check database permissions.";
+  "Referral error: " + error.message;
     }
   }
 }
