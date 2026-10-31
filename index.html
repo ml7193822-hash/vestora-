@@ -996,6 +996,7 @@ async function registerUser(event) {
 }
 
 async function loginUser() {
+  alert("Login function started");
   if (busy) return;
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
