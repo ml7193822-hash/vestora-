@@ -2915,6 +2915,19 @@ async function recordReferralIfNeeded() {
     }
   }
 }
+  // Capture VESTORA referral link
+(function captureReferralLink() {
+  const params = new URLSearchParams(window.location.search);
+  const referrerId = params.get("ref");
+
+  if (referrerId) {
+    try {
+      sessionStorage.setItem("vestora_referrer_id", referrerId);
+    } catch (error) {
+      console.error("Referral link capture failed:", error);
+    }
+  }
+})();
 
 async function checkLoginSession() {
   showAuthMessage("Checking your account...");
