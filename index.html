@@ -705,13 +705,42 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
     <p class="referral-note">Referral counts depend on successful database tracking. Sharing a link does not guarantee earnings.</p>
   </section>
 
-  <section class="my-products-section" id="myProductsSection">
-    <div class="my-products-card">
-      <h2 class="my-products-heading">📦 My Products</h2>
-      <p class="my-products-description">View the products you have purchased.</p>
-      <div id="myProductsList"><p>Loading your products...</p></div>
+  <section id="vestoraRewards" class="my-products-section">
+  <div class="my-products-card">
+    <h2 class="my-products-heading">🏆 VESTORA Reward Challenges</h2>
+    <p class="my-products-description">
+      Invite friends, complete challenges and unlock rewards.
+    </p>
+
+    <div class="reward-card">
+      <h3>👥 Invite 10 People to Register</h3>
+      <p>Reward: UGX 1,000</p>
+      <p id="registrationProgress">Loading progress...</p>
+      <button id="claimRegistration" onclick="claimVestoraReward('REGISTRATION')">Unlock Reward</button>
     </div>
-  </section>
+
+    <div class="reward-card">
+      <h3>📦 Invite 3 People to Buy V1</h3>
+      <p>Reward: UGX 7,000</p>
+      <p id="v1Progress">Loading progress...</p>
+      <button id="claimV1" onclick="claimVestoraReward('V1')">Unlock Reward</button>
+    </div>
+
+    <div class="reward-card">
+      <h3>📦 Invite 7 People to Buy V2</h3>
+      <p>Reward: UGX 15,000</p>
+      <p id="v2Progress">Loading progress...</p>
+      <button id="claimV2" onclick="claimVestoraReward('V2')">Unlock Reward</button>
+    </div>
+
+    <div class="reward-card">
+      <h3>📦 Invite 3 People to Buy V3</h3>
+      <p>Reward: UGX 20,000</p>
+      <p id="v3Progress">Loading progress...</p>
+      <button id="claimV3" onclick="claimVestoraReward('V3')">Unlock Reward</button>
+    </div>
+  </div>
+        </section>
 
   <section class="stats">
     <div class="stat"><div class="stat-icon">▣</div><div><small>Account Balance</small><strong id="accountBalance">UGX 0</strong></div></div>
@@ -3309,6 +3338,30 @@ checkLoginSession();
 #loginForm[hidden] {
   display: none !important;
 }
+  .my-products-section {
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.my-products-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.my-products-heading {
+  color: #087f45;
+  font-size: 21px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.my-products-description {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 15px;
+  }
   </style>
 </body>
 </html>
