@@ -1618,6 +1618,7 @@ async function checkAdminAccess() {
 
 
 
+
 async function loadAdminDashboard() {
   const message = document.getElementById("adminMessage");
   if (!message) return;
@@ -1628,7 +1629,8 @@ async function loadAdminDashboard() {
     const allowed = await checkAdminAccess();
 
     if (!allowed) {
-      message.textContent = "Access denied. Sign in with an administrator account.";
+      message.textContent =
+        "Access denied. Sign in with an administrator account.";
       document.getElementById("adminPanel")?.classList.remove("active");
       return;
     }
@@ -1639,28 +1641,30 @@ async function loadAdminDashboard() {
       usersResult,
       purchasesResult,
       depositsResult,
-      manualResult
+      manualResult,
+      withdrawalsResult
     ] = await Promise.all([
-      supabaseClient
-        .from("profiles")
+      supabaseClient.from("profiles")
         .select("id, full_name, role, balance, created_at")
         .order("created_at", { ascending: false })
         .limit(100),
 
-      supabaseClient
-        .from("product_purchases")
+      supabaseClient.from("product_purchases")
         .select("user_id, amount_paid, status, purchased_at")
         .order("purchased_at", { ascending: false })
         .limit(100),
 
-      supabaseClient
-        .from("pawapay_deposits")
+      supabaseClient.from("pawapay_deposits")
         .select("user_id, amount, status, created_at")
         .limit(1000),
 
-      supabaseClient
-        .from("manual_deposit_requests")
+      supabaseClient.from("manual_deposit_requests")
         .select("id, user_id, amount, phone_number, payment_method, transaction_id, status, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100),
+
+      supabaseClient.from("withdrawal_requests")
+        .select("id, user_id, amount, withdrawal_fee, net_amount, payment_method, phone_number, status, created_at, refunded_at")
         .order("created_at", { ascending: false })
         .limit(100)
     ]);
@@ -1669,11 +1673,13 @@ async function loadAdminDashboard() {
     if (purchasesResult.error) throw purchasesResult.error;
     if (depositsResult.error) throw depositsResult.error;
     if (manualResult.error) throw manualResult.error;
+    if (withdrawalsResult.error) throw withdrawalsResult.error;
 
     const users = usersResult.data || [];
     const purchases = purchasesResult.data || [];
     const deposits = depositsResult.data || [];
     const manualDeposits = manualResult.data || [];
+    const withdrawals = withdrawalsResult.data || [];
 
     const money = value =>
       "UGX " + Number(value || 0).toLocaleString("en-UG");
@@ -1708,7 +1714,7 @@ async function loadAdminDashboard() {
       purchases.length.toLocaleString("en-UG")
     );
 
-    // Deposit totals: successful PawaPay + approved manual deposits
+    // Deposit totals
     const successfulStatuses = [
       "success",
       "successful",
@@ -1809,8 +1815,9 @@ async function loadAdminDashboard() {
       ])
     );
 
-    // Manual deposit requests with approval buttons
-    const depositTarget = document.getElementById("adminDepositsTable");
+    // Manual deposit requests
+    const depositTarget =
+      document.getElementById("adminDepositsTable");
 
     if (depositTarget) {
       depositTarget.replaceChildren();
@@ -1884,9 +1891,7 @@ async function loadAdminDashboard() {
               "Verify this payment and approve UGX " +
               Number(item.amount).toLocaleString("en-UG") +
               " for this customer?"
-            )) {
-              return;
-            }
+            )) return;
 
             approveButton.disabled = true;
             approveButton.textContent = "Processing...";
@@ -1894,15 +1899,15 @@ async function loadAdminDashboard() {
             try {
               const { data, error } = await supabaseClient.rpc(
                 "approve_vestora_manual_deposit",
-                {
-                  p_deposit_id: item.id
-                }
+                { p_deposit_id: item.id }
               );
 
               if (error) throw error;
 
               if (!data || data.success !== true) {
-                throw new Error("Deposit approval was not confirmed.");
+                throw new Error(
+                  "Deposit approval was not confirmed."
+                );
               }
 
               alert(
@@ -1914,16 +1919,13 @@ async function loadAdminDashboard() {
 
             } catch (error) {
               console.error("Deposit approval failed:", error);
-
               alert("Approval failed: " + error.message);
-
               approveButton.disabled = false;
               approveButton.textContent = "Approve";
             }
           };
 
           actionCell.appendChild(approveButton);
-
         } else {
           actionCell.textContent = "Processed";
         }
@@ -1936,16 +1938,190 @@ async function loadAdminDashboard() {
       depositTarget.appendChild(table);
     }
 
-    // Withdrawals and investments
-    setText("adminWithdrawals", "Not connected");
-    setText("adminPendingWithdrawals", "Not connected");
-    setText("adminInvestmentCount", "Not connected");
-
-    renderTable(
-      "adminWithdrawalsTable",
-      ["Status"],
-      [["Withdrawal table not configured"]]
+    // Withdrawal totals
+    const pendingWithdrawals = withdrawals.filter(item =>
+      String(item.status || "").toLowerCase() === "pending"
     );
+
+    setText(
+      "adminWithdrawals",
+      withdrawals.length.toLocaleString("en-UG")
+    );
+
+    setText(
+      "adminPendingWithdrawals",
+      pendingWithdrawals.length.toLocaleString("en-UG")
+    );
+
+    // Withdrawal requests with Approve and Reject buttons
+    const withdrawalTarget =
+      document.getElementById("adminWithdrawalsTable");
+
+    if (withdrawalTarget) {
+      withdrawalTarget.replaceChildren();
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      [
+        "Customer",
+        "Method",
+        "Phone",
+        "Requested",
+        "Fee",
+        "Customer Receives",
+        "Status",
+        "Action"
+      ].forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      if (!withdrawals.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 8;
+        cell.textContent = "No withdrawal requests found.";
+        row.appendChild(cell);
+        tbody.appendChild(row);
+      }
+
+      withdrawals.forEach(item => {
+        const row = document.createElement("tr");
+
+        const customer = users.find(
+          user => user.id === item.user_id
+        );
+
+        [
+          customer?.full_name || item.user_id,
+          item.payment_method || "",
+          item.phone_number || "",
+          money(item.amount),
+          money(item.withdrawal_fee),
+          money(item.net_amount),
+          item.status || "pending"
+        ].forEach(value => {
+          const cell = document.createElement("td");
+          cell.textContent = String(value ?? "");
+          row.appendChild(cell);
+        });
+
+        const actionCell = document.createElement("td");
+
+        if (
+          String(item.status || "").toLowerCase() === "pending"
+        ) {
+          const approveButton = document.createElement("button");
+          approveButton.type = "button";
+          approveButton.textContent = "Approve";
+
+          approveButton.onclick = async () => {
+            if (!confirm(
+              "Confirm that you will pay " +
+              money(item.net_amount) +
+              " to " + (item.phone_number || "this customer") + "?"
+            )) return;
+
+            approveButton.disabled = true;
+            approveButton.textContent = "Processing...";
+
+            try {
+              const { data, error } = await supabaseClient.rpc(
+                "admin_approve_vestora_withdrawal",
+                { p_withdrawal_id: item.id }
+              );
+
+              if (error) throw error;
+
+              if (!data || data.success !== true) {
+                throw new Error(
+                  "Withdrawal approval was not confirmed."
+                );
+              }
+
+              alert(
+                "Withdrawal marked approved.\nCustomer receives: " +
+                money(data.net_amount)
+              );
+
+              await loadAdminDashboard();
+
+            } catch (error) {
+              console.error("Withdrawal approval failed:", error);
+              alert("Approval failed: " + error.message);
+              approveButton.disabled = false;
+              approveButton.textContent = "Approve";
+            }
+          };
+
+          const rejectButton = document.createElement("button");
+          rejectButton.type = "button";
+          rejectButton.textContent = "Reject";
+
+          rejectButton.onclick = async () => {
+            if (!confirm(
+              "Reject this withdrawal and refund " +
+              money(item.amount) +
+              " to the customer's VESTORA balance?"
+            )) return;
+
+            rejectButton.disabled = true;
+            rejectButton.textContent = "Processing...";
+
+            try {
+              const { data, error } = await supabaseClient.rpc(
+                "admin_reject_vestora_withdrawal",
+                { p_withdrawal_id: item.id }
+              );
+
+              if (error) throw error;
+
+              if (!data || data.success !== true) {
+                throw new Error(
+                  "Withdrawal rejection was not confirmed."
+                );
+              }
+
+              alert(
+                "Withdrawal rejected.\nRefunded: " +
+                money(data.refunded_amount)
+              );
+
+              await loadAdminDashboard();
+
+            } catch (error) {
+              console.error("Withdrawal rejection failed:", error);
+              alert("Rejection failed: " + error.message);
+              rejectButton.disabled = false;
+              rejectButton.textContent = "Reject";
+            }
+          };
+
+          actionCell.appendChild(approveButton);
+          actionCell.appendChild(rejectButton);
+
+        } else {
+          actionCell.textContent = "Processed";
+        }
+
+        row.appendChild(actionCell);
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      withdrawalTarget.appendChild(table);
+    }
+
+    // Investments
+    setText("adminInvestmentCount", "Not connected");
 
     renderTable(
       "adminInvestmentsTable",
@@ -1963,7 +2139,7 @@ async function loadAdminDashboard() {
     setText("adminEarnings", money(earningsResult.data));
 
     message.textContent =
-      "Dashboard loaded successfully. Manual deposits, PawaPay, users, purchases and earnings loaded.";
+      "Dashboard loaded successfully. Users, purchases, deposits, withdrawals and earnings loaded.";
 
   } catch (error) {
     console.error("Admin dashboard loading error:", error);
@@ -1972,6 +2148,7 @@ async function loadAdminDashboard() {
       "Could not load records: " + error.message;
   }
 }
+
 
 async function createAdminRedeemCode() {
 const code = document.getElementById("adminRedeemCode").value.trim().toUpperCase();
