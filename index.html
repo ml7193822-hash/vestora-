@@ -1653,47 +1653,49 @@ async function loadAdminDashboard() {
     message.textContent = "Loading records...";
 
     const [
-      usersResult,
-      purchasesResult,
-      depositsResult,
-      manualResult,
-      withdrawalsResult
-    ] = await Promise.all([
-      supabaseClient.from("profiles")
-        .select("id, full_name, role, balance, created_at")
-        .order("created_at", { ascending: false })
-        .limit(100),
+  usersResult,
+  purchasesResult,
+  depositsResult,
+  manualResult,
+  withdrawalsResult,
+  dailyProfitResult
+] = await Promise.all([
+  supabaseClient.from("profiles")
+    .select("id, full_name, role, balance, created_at")
+    .order("created_at", { ascending: false })
+    .limit(100),
 
-      supabaseClient.from("product_purchases")
-        .select("id, user_id, product_id, amount_paid, status, purchased_at, profit_start_date, profit_end_date, total_profit_paid")
-        .order("purchased_at", { ascending: false })
-        .limit(100),
+  supabaseClient.from("product_purchases")
+    .select("id, user_id, product_id, amount_paid, status, purchased_at, profit_start_date, profit_end_date, total_profit_paid")
+    .order("purchased_at", { ascending: false })
+    .limit(100),
 
-      supabaseClient.from("pawapay_deposits")
-        .select("user_id, amount, status, created_at")
-        .limit(1000),
+  supabaseClient.from("pawapay_deposits")
+    .select("user_id, amount, status, created_at")
+    .limit(1000),
 
-      supabaseClient.from("manual_deposit_requests")
-        .select("id, user_id, amount, phone_number, payment_method, transaction_id, status, created_at")
-        .order("created_at", { ascending: false })
-        .limit(100),
+  supabaseClient.from("manual_deposit_requests")
+    .select("id, user_id, amount, phone_number, payment_method, transaction_id, status, created_at")
+    .order("created_at", { ascending: false })
+    .limit(100),
 
-            supabaseClient.from("withdrawal_requests")
-        .select("id, user_id, amount, withdrawal_fee, net_amount, payment_method, phone_number, status, created_at, refunded_at")
-        .order("created_at", { ascending: false })
-        .limit(100),
+  supabaseClient.from("withdrawal_requests")
+    .select("id, user_id, amount, withdrawal_fee, net_amount, payment_method, phone_number, status, created_at, refunded_at")
+    .order("created_at", { ascending: false })
+    .limit(100),
 
-      supabaseClient.from("daily_profit_credits")
-        .select("id, purchase_id, user_id, profit_date, amount, created_at")
-        .order("profit_date", { ascending: false })
-        .limit(200)
-    ]);
+  supabaseClient.from("daily_profit_credits")
+    .select("id, purchase_id, user_id, profit_date, amount, created_at")
+    .order("profit_date", { ascending: false })
+    .limit(200)
+]);
 
     if (usersResult.error) throw usersResult.error;
     if (purchasesResult.error) throw purchasesResult.error;
     if (depositsResult.error) throw depositsResult.error;
     if (manualResult.error) throw manualResult.error;
     if (withdrawalsResult.error) throw withdrawalsResult.error;
+    if (dailyProfitResult.error) throw dailyProfitResult.error;
 
     const users = usersResult.data || [];
     const purchases = purchasesResult.data || [];
