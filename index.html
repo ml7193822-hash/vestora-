@@ -365,85 +365,200 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
 .brand h1{font-size:16px;letter-spacing:1px}.brand small{font-size:7px}.user .welcome-label{display:none}
 .products{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-  /* VESTORA ADMIN DASHBOARD */
+  
+/* ===== VESTORA PREMIUM ADMIN DASHBOARD ===== */
+
 #adminPanel {
   display: none;
-  background: #ffffff;
+  background: #f0faf5;
   color: #14532d;
-  padding: 20px;
-  border-radius: 14px;
+  padding: 18px;
+  border-radius: 20px;
   margin: 15px 0;
+  box-shadow: 0 5px 25px rgba(0, 80, 40, 0.08);
+  overflow: hidden;
 }
 
 #adminPanel.active {
   display: block;
 }
 
-#adminPanel h2,
+/* Dashboard headings */
+
+#adminPanel h2 {
+  background: linear-gradient(120deg, #004d2b, #008b43);
+  color: white;
+  padding: 22px 18px;
+  border-radius: 15px;
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+
 #adminPanel h3 {
-  color: #14532d;
+  color: #075c35;
+  font-size: 21px;
+  margin: 28px 0 15px;
+  font-weight: 800;
 }
 
-.admin-card {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 12px;
-  padding: 16px;
+/* Summary cards */
+
+#adminPanel .admin-card {
+  background: linear-gradient(145deg, #ffffff, #f2fff7);
+  border: 1px solid #d8f3e2;
+  border-radius: 18px;
+  padding: 20px 15px;
   margin: 12px 0;
+  box-shadow: 0 5px 15px rgba(0, 80, 40, 0.09);
+  transition: transform 0.2s;
 }
 
-.admin-card p {
-  font-size: 22px;
-  font-weight: bold;
+#adminPanel .admin-card p {
+  font-size: 23px;
+  font-weight: 900;
+  color: #064e2d;
+  overflow-wrap: anywhere;
+  margin: 10px 0 0;
+}
+
+/* Table containers */
+
+#adminUsersTable,
+#adminPurchasesTable,
+#adminDepositsTable,
+#adminWithdrawalsTable,
+#adminInvestmentsTable {
+  width: 100%;
+  overflow-x: auto;
+  margin: 15px 0 28px;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 70, 35, 0.07);
+}
+
+/* Tables */
+
+#adminPanel table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  font-size: 15px;
+}
+
+#adminPanel th {
+  background: linear-gradient(120deg, #00652f, #008b43);
+  color: white;
+  padding: 17px 13px;
+  text-align: left;
+  font-weight: 800;
+  white-space: nowrap;
+  border: none;
+}
+
+#adminPanel td {
+  padding: 17px 13px;
+  border-bottom: 1px solid #e1f3e7;
+  color: #174b31;
   overflow-wrap: anywhere;
 }
 
-#adminPanel button {
-  background: #166534;
+#adminPanel tbody tr:nth-child(even) {
+  background: #effcf4;
+}
+
+#adminPanel tbody tr:hover {
+  background: #e0f7e9;
+}
+
+/* RED APPROVE BUTTON */
+
+#adminDepositsTable button {
+  background: linear-gradient(135deg, #ff2525, #d90000);
   color: white;
   border: none;
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 9px rgba(220, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+#adminDepositsTable button:active {
+  transform: scale(0.96);
+}
+
+#adminDepositsTable button:disabled {
+  background: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Other admin buttons */
+
+#adminPanel button {
+  border: none;
+  border-radius: 10px;
   padding: 12px 18px;
-  border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
 }
 
-#adminUsersTable,
-#adminPurchasesTable {
-  overflow-x: auto;
-  margin: 12px 0 22px;
+/* Mobile design */
+
+@media (max-width: 649px) {
+  #adminPanel {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  #adminPanel h2 {
+    font-size: 21px;
+    padding: 18px 14px;
+  }
+
+  #adminPanel h3 {
+    font-size: 19px;
+  }
+
+  #adminPanel .admin-card {
+    width: 100%;
+    margin: 12px 0;
+    padding: 18px;
+  }
+
+  #adminPanel .admin-card p {
+    font-size: 22px;
+  }
+
+  #adminPanel table {
+    min-width: 720px;
+  }
+
+  #adminPanel th,
+  #adminPanel td {
+    padding: 14px 11px;
+  }
 }
 
-#adminPanel table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 480px;
-}
-
-#adminPanel th,
-#adminPanel td {
-  border: 1px solid #dcfce7;
-  padding: 10px;
-  text-align: left;
-}
-
-#adminPanel th {
-  background: #166534;
-  color: white;
-}
-
-#adminPanel tr:nth-child(even) {
-  background: #f0fdf4;
-}
+/* Desktop design */
 
 @media (min-width: 650px) {
+  #adminPanel {
+    padding: 25px;
+  }
+
   #adminPanel .admin-card {
     display: inline-block;
-    width: 28%;
+    width: 22%;
     vertical-align: top;
     margin-right: 1%;
   }
-  }
+}
+
 </style>
 </head>
 
