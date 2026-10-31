@@ -1159,26 +1159,25 @@ deposit: {
 },
 
     withdraw: {
-      title: "💸 Withdraw",
-      text: "Withdrawal requests are not connected yet."
-    },
-    history: {
-      title: "◷ Transaction History",
-      text: "Transaction history is not connected yet."
-    },
-    investments: {
-      title: "📊 Investment History",
-      text: "Loading your investment records..."
-    },
-    referrals: {
-      title: "♧ Referrals",
-      text: "Your referral information is loading."
-    },
-    support: {
-      title: "☏ Support",
-      text: "Contact customer support for help."
-    }
-  };
+  title: "💸 Withdraw",
+  text: "Request a withdrawal from your available VESTORA balance."
+},
+history: {
+  title: "◷ Transaction History",
+  text: "View your deposits, withdrawals and product purchases."
+},
+investments: {
+  title: "📊 Investment History",
+  text: "View your active investments, approval status and profits earned."
+},
+referrals: {
+  title: "♧ Referrals",
+  text: "Share your referral link and track your invited members and commissions."
+},
+support: {
+  title: "☏ Support",
+  text: "Contact VESTORA customer support on WhatsApp: 0791592637."
+}
 
   const item = content[section] || {
     title: "VESTORA",
@@ -1573,14 +1572,105 @@ if (depositForm) depositForm.reset();
 
   message.classList.add("active");
 
+  
   if (section === "investments") {
     loadInvestmentHistory();
   }
 
+  if (section === "history") {
+    loadTransactionHistory();
+  }
+
+  if (section === "referrals") {
+    loadReferralInformation();
+  }
   message.classList.add("active");
 window.scrollTo({ top: 0, behavior: "smooth" });
 return;
 }
+  async function loadTransactionHistory() {
+  const extra = document.getElementById("messageExtra");
+
+  extra.innerHTML = "<p>Loading your transaction history...</p>";
+
+  try {
+    if (!currentUser) {
+      throw new Error("Please sign in first.");
+    }
+
+    const [deposits, pawapay, withdrawals, purchases] =
+      await Promise.all([
+        supabaseClient.from("manual_deposit_requests")
+          .select("amount, payment_method, status, created_at")
+          .eq("user_id", currentUser.id),
+
+        supabaseClient.from("pawapay_deposits")
+          .select("amount, status, created_at")
+          .eq("user_id", currentUser.id),
+
+        supabaseClient.from("withdrawal_requests")
+          .select("amount, net_amount, status, created_at")
+          .eq("user_id", currentUser.id),
+
+        supabaseClient.from("product_purchases")
+          .select("amount_paid, status, purchased_at")
+          .eq("user_id", currentUser.id)
+      ]);
+
+    if (deposits.error) throw deposits.error;
+    if (pawapay.error) throw pawapay.error;
+    if (withdrawals.error) throw withdrawals.error;
+    if (purchases.error) throw purchases.error;
+
+    const records = [
+      ...(deposits.data || []).map(x => ({
+        type: "Manual Deposit",
+        amount: x.amount,
+        status: x.status,
+        date: x.created_at
+      })),
+      ...(pawapay.data || []).map(x => ({
+        type: "Mobile Money Deposit",
+        amount: x.amount,
+        status: x.status,
+        date: x.created_at
+      })),
+      ...(withdrawals.data || []).map(x => ({
+        type: "Withdrawal",
+        amount: x.amount,
+        status: x.status,
+        date: x.created_at
+      })),
+      ...(purchases.data || []).map(x => ({
+        type: "Product Purchase",
+        amount: x.amount_paid,
+        status: x.status,
+        date: x.purchased_at
+      }))
+    ];
+
+    records.sort((a, b) =>
+      new Date(b.date) - new Date(a.date)
+    );
+
+    extra.innerHTML = `
+      <h3>My Transactions</h3>
+      <div class="transaction-history">
+        ${records.length ? records.map(x => `
+          <div class="withdraw-rule" style="margin-bottom:12px">
+            <strong>${x.type}</strong>
+            <p>Amount: UGX ${Number(x.amount || 0).toLocaleString("en-UG")}</p>
+            <p>Status: ${x.status || "Pending"}</p>
+            <p>Date: ${x.date ? new Date(x.date).toLocaleString() : "—"}</p>
+          </div>
+        `).join("") : "<p>No transactions found yet.</p>"}
+      </div>
+    `;
+  } catch (error) {
+    console.error("Transaction history error:", error);
+    extra.textContent = error.message || "Could not load transaction history.";
+  }
+  }
 
 const productPlans = {
   V1:{ amount:20000, daily:5000, duration:15, total:75000 },
