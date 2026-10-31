@@ -1137,7 +1137,8 @@ deposit: {
         result.textContent =
           "Deposit submitted. An administrator must verify and approve your payment.";
 
-        event.currentTarget.reset();
+        const depositForm = document.getElementById("manualDepositForm");
+if (depositForm) depositForm.reset();
       } catch (error) {
         console.error("Deposit submission failed:", error);
         result.textContent = error.message || "Could not submit deposit.";
