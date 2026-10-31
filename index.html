@@ -2430,25 +2430,89 @@ table.appendChild(body);
 list.replaceChildren(table);
   }
 
-async function purchaseProduct(plan) {
-  if (!currentUser) return alert("Please log in first.");
-  const item = productPlans[plan];
-  if (!item) return alert("Product not found.");
+let selectedPurchasePlan = null;
 
-  const confirmed = confirm("Purchase VESTORA " + plan + " for UGX " + item.amount.toLocaleString("en-UG") + "?\n\nThis will deduct the purchase amount from your account balance.");
-  if (!confirmed) return;
+function purchaseProduct(plan) {
+  if (!currentUser) {
+    return alert("Please log in first.");
+  }
+
+  const item = productPlans[plan];
+
+  if (!item) {
+    return alert("Product not found.");
+  }
+
+  selectedPurchasePlan = plan;
+
+  document.getElementById("confirmProduct").textContent =
+    "VESTORA " + plan;
+
+  document.getElementById("confirmAmount").textContent =
+    "UGX " + Number(item.amount).toLocaleString("en-UG");
+
+  document.getElementById("confirmBalance").textContent =
+  document.getElementById("accountBalance").textContent || "UGX 0";
+
+  document.getElementById("purchaseModalMessage").textContent =
+    "Review your purchase details before proceeding.";
+
+  const button = document.getElementById("confirmPurchaseButton");
+  button.disabled = false;
+  button.textContent = "Confirm Purchase";
+
+  document.getElementById("purchaseModal").classList.add("active");
+}
+
+async function confirmVestoraPurchase() {
+  if (!selectedPurchasePlan) return;
+
+  const button = document.getElementById("confirmPurchaseButton");
+  button.disabled = true;
+  button.textContent = "Processing...";
 
   try {
-    const { data, error } = await supabaseClient.rpc("purchase_vestora_product", { p_product_code: plan });
-    if (error) return alert("Purchase failed: " + error.message);
-    alert(typeof data === "string" ? data : "Purchase submitted successfully.");
+    const { data, error } = await supabaseClient.rpc(
+      "purchase_vestora_product",
+      { p_product_code: selectedPurchasePlan }
+    );
+
+    if (error) throw error;
+
+    document.getElementById("purchaseModalMessage").textContent =
+      typeof data === "string"
+        ? data
+        : "Your purchase was submitted successfully.";
+
+    button.textContent = "Purchase Successful";
+
     await loadProfile();
     await loadMyProducts();
-    go("products");
-  } catch (err) {
-    alert("Purchase failed: " + err.message);
+
+    setTimeout(() => {
+      document.getElementById("purchaseModal").classList.remove("active");
+      selectedPurchasePlan = null;
+      go("products");
+    }, 1200);
+
+  } catch (error) {
+    console.error("Purchase failed:", error);
+
+    document.getElementById("purchaseModalMessage").textContent =
+      "Purchase failed: " + error.message;
+
+    button.disabled = false;
+    button.textContent = "Try Again";
   }
 }
+
+document.getElementById("confirmPurchaseButton").onclick =
+  confirmVestoraPurchase;
+
+document.getElementById("cancelPurchaseButton").onclick = () => {
+  document.getElementById("purchaseModal").classList.remove("active");
+  selectedPurchasePlan = null;
+};
 
 document.getElementById("registerForm").addEventListener("submit", registerUser);
 
@@ -3009,6 +3073,145 @@ checkLoginSession();
   }
   }
 </script>
+  <!-- VESTORA Purchase Confirmation -->
+<div id="purchaseModal" class="purchase-modal">
+  <div class="purchase-modal-card">
+    <div class="purchase-modal-logo">V</div>
+
+    <h2>Confirm Your Investment</h2>
+    <p class="purchase-subtitle">
+      Review your purchase details before proceeding.
+    </p>
+
+    <div class="purchase-detail">
+      <span>Selected product</span>
+      <strong id="confirmProduct">V1</strong>
+    </div>
+
+    <div class="purchase-detail">
+      <span>Purchase amount</span>
+      <strong id="confirmAmount">UGX 20,000</strong>
+    </div>
+
+    <div class="purchase-detail">
+      <span>Available balance</span>
+      <strong id="confirmBalance">UGX 0</strong>
+    </div>
+
+    <p id="purchaseModalMessage" class="purchase-modal-message">
+      Please confirm that you want to proceed.
+    </p>
+
+    <button id="confirmPurchaseButton"
+      class="purchase-confirm-button"
+      type="button">
+      Confirm Purchase
+    </button>
+
+    <button id="cancelPurchaseButton"
+      class="purchase-cancel-button"
+      type="button">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<style>
+.purchase-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(5, 15, 10, 0.82);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.purchase-modal.active {
+  display: flex;
+}
+
+.purchase-modal-card {
+  background: #fff;
+  color: #173b2b;
+  width: 100%;
+  max-width: 420px;
+  padding: 28px 22px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+
+.purchase-modal-logo {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+  background: #087b49;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.purchase-modal-card h2 {
+  margin: 8px 0;
+}
+
+.purchase-subtitle {
+  color: #718078;
+  font-size: 13px;
+  margin-bottom: 22px;
+}
+
+.purchase-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e8eee9;
+  text-align: left;
+  font-size: 14px;
+}
+
+.purchase-detail span {
+  color: #718078;
+}
+
+.purchase-modal-message {
+  font-size: 13px;
+  color: #718078;
+  margin: 20px 0;
+}
+
+.purchase-confirm-button,
+.purchase-cancel-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 9px;
+}
+
+.purchase-confirm-button {
+  background: #087b49;
+  color: white;
+}
+
+.purchase-cancel-button {
+  background: #edf2ee;
+  color: #294738;
+}
+
+.purchase-confirm-button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+  </style>
 </body>
 </html>
 
