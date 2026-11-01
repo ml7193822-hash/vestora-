@@ -705,42 +705,98 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
     <p class="referral-note">Referral counts depend on successful database tracking. Sharing a link does not guarantee earnings.</p>
   </section>
 
-  <section id="vestoraRewards" class="my-products-section">
-  <div class="my-products-card">
-    <h2 class="my-products-heading">🏆 VESTORA Reward Challenges</h2>
-    <p class="my-products-description">
-      Invite friends, complete challenges and unlock rewards.
-    </p>
-
-    <div class="reward-card">
-      <h3>👥 Invite 10 People to Register</h3>
-      <p>Reward: UGX 1,000</p>
-      <p id="registrationProgress">Loading progress...</p>
-      <button id="claimRegistration" onclick="claimVestoraReward('REGISTRATION')">Unlock Reward</button>
+  
+<section id="vestoraRewards" class="my-products-section">
+  <div class="vestora-rewards">
+    <div class="rewards-heading">
+      <div>
+        <span class="rewards-eyebrow">VESTORA REWARDS</span>
+        <h2>Reward Challenges</h2>
+        <p>Invite friends, complete challenges and unlock rewards.</p>
+      </div>
+      <div class="rewards-icon">🏆</div>
     </div>
 
-    <div class="reward-card">
-      <h3>📦 Invite 3 People to Buy V1</h3>
-      <p>Reward: UGX 7,000</p>
-      <p id="v1Progress">Loading progress...</p>
-      <button id="claimV1" onclick="claimVestoraReward('V1')">Unlock Reward</button>
-    </div>
+    <div class="reward-grid">
+      <article class="reward-card">
+        <div class="reward-card-top">
+          <span class="reward-icon">👥</span>
+          <span class="reward-status">REGISTRATION</span>
+        </div>
+        <h3>Invite 10 People to Register</h3>
+        <p>Grow your VESTORA community by inviting new members.</p>
+        <div class="reward-amount">UGX 1,000</div>
+        <div class="reward-progress-label">
+          <span>Your progress</span>
+          <strong id="registrationProgress">Loading progress...</strong>
+        </div>
+        <div class="reward-progress-track">
+          <div class="reward-progress-fill"></div>
+        </div>
+        <button id="claimRegistration" class="reward-claim-button"
+          onclick="claimVestoraReward('REGISTRATION')">Unlock Reward</button>
+      </article>
 
-    <div class="reward-card">
-      <h3>📦 Invite 7 People to Buy V2</h3>
-      <p>Reward: UGX 15,000</p>
-      <p id="v2Progress">Loading progress...</p>
-      <button id="claimV2" onclick="claimVestoraReward('V2')">Unlock Reward</button>
-    </div>
+      <article class="reward-card">
+        <div class="reward-card-top">
+          <span class="reward-icon">📦</span>
+          <span class="reward-status">V1 CHALLENGE</span>
+        </div>
+        <h3>Invite 3 People to Buy V1</h3>
+        <p>Help three friends get started with VESTORA V1.</p>
+        <div class="reward-amount">UGX 7,000</div>
+        <div class="reward-progress-label">
+          <span>Your progress</span>
+          <strong id="v1Progress">Loading progress...</strong>
+        </div>
+        <div class="reward-progress-track">
+          <div class="reward-progress-fill"></div>
+        </div>
+        <button id="claimV1" class="reward-claim-button"
+          onclick="claimVestoraReward('V1')">Unlock Reward</button>
+      </article>
 
-    <div class="reward-card">
-      <h3>📦 Invite 3 People to Buy V3</h3>
-      <p>Reward: UGX 20,000</p>
-      <p id="v3Progress">Loading progress...</p>
-      <button id="claimV3" onclick="claimVestoraReward('V3')">Unlock Reward</button>
+      <article class="reward-card">
+        <div class="reward-card-top">
+          <span class="reward-icon">🚀</span>
+          <span class="reward-status">V2 CHALLENGE</span>
+        </div>
+        <h3>Invite 7 People to Buy V2</h3>
+        <p>Build your network and reach the V2 challenge.</p>
+        <div class="reward-amount">UGX 15,000</div>
+        <div class="reward-progress-label">
+          <span>Your progress</span>
+          <strong id="v2Progress">Loading progress...</strong>
+        </div>
+        <div class="reward-progress-track">
+          <div class="reward-progress-fill"></div>
+        </div>
+        <button id="claimV2" class="reward-claim-button"
+          onclick="claimVestoraReward('V2')">Unlock Reward</button>
+      </article>
+
+      <article class="reward-card">
+        <div class="reward-card-top">
+          <span class="reward-icon">🏆</span>
+          <span class="reward-status">V3 CHALLENGE</span>
+        </div>
+        <h3>Invite 3 People to Buy V3</h3>
+        <p>Complete the V3 challenge and unlock your reward.</p>
+        <div class="reward-amount">UGX 20,000</div>
+        <div class="reward-progress-label">
+          <span>Your progress</span>
+          <strong id="v3Progress">Loading progress...</strong>
+        </div>
+        <div class="reward-progress-track">
+          <div class="reward-progress-fill"></div>
+        </div>
+        <button id="claimV3" class="reward-claim-button"
+          onclick="claimVestoraReward('V3')">Unlock Reward</button>
+      </article>
     </div>
   </div>
-        </section>
+</section>
+
 
   <section class="stats">
     <div class="stat"><div class="stat-icon">▣</div><div><small>Account Balance</small><strong id="accountBalance">UGX 0</strong></div></div>
@@ -3391,6 +3447,140 @@ checkLoginSession();
   font-size: 12px;
   font-weight: bold;
   }
+  
+/* VESTORA PREMIUM REWARD DESIGN */
+.vestora-rewards {
+  background: #0b1729;
+  padding: 22px;
+  border-radius: 20px;
+  margin: 20px 0;
+  color: #fff;
+}
+.rewards-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+.rewards-eyebrow {
+  color: #d6ad55;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+.rewards-heading h2 {
+  font-size: 23px;
+  margin: 7px 0;
+  color: #fff;
+}
+.rewards-heading p {
+  color: #a8b6c8;
+  font-size: 13px;
+  margin: 0;
+}
+.rewards-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 17px;
+  display: grid;
+  place-items: center;
+  background: #1b3048;
+  font-size: 27px;
+}
+.reward-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+.vestora-rewards .reward-card {
+  background: linear-gradient(145deg, #192c43, #122238);
+  border: 1px solid #30445b;
+  border-radius: 17px;
+  padding: 17px;
+  min-width: 0;
+  color: #fff;
+}
+.reward-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+.reward-icon { font-size: 24px; }
+.reward-status {
+  color: #5ee0a0;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(94, 224, 160, 0.25);
+  border-radius: 20px;
+  padding: 5px 8px;
+  font-size: 9px;
+  font-weight: 800;
+}
+.vestora-rewards .reward-card h3 {
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 7px;
+  color: #fff;
+}
+.vestora-rewards .reward-card > p {
+  font-size: 12px;
+  color: #a8b6c8;
+  line-height: 1.5;
+}
+.reward-amount {
+  color: #f3c969;
+  font-size: 22px;
+  font-weight: 900;
+  margin: 16px 0;
+}
+.reward-progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  color: #a8b6c8;
+  font-size: 11px;
+  margin-bottom: 9px;
+}
+.reward-progress-label strong {
+  color: #fff;
+  text-align: right;
+}
+.reward-progress-track {
+  height: 7px;
+  background: #304258;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 17px;
+}
+.reward-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #079653, #5ee0a0);
+  border-radius: 20px;
+}
+.reward-claim-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(100deg, #07864d, #13ae6a);
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+}
+.reward-claim-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+@media (max-width: 480px) {
+  .vestora-rewards { padding: 15px; }
+  .reward-grid { grid-template-columns: 1fr; }
+}
+
   </style>
 </body>
 </html>
