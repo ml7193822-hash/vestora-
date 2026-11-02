@@ -2810,8 +2810,15 @@ document.getElementById("redeemForm").addEventListener("submit", async function(
   }
 
   if (!currentUser) {
-    result.textContent = "Please log in first.";
+  const { data: sessionData, error: sessionError } =
+    await supabaseClient.auth.getSession();
+
+  if (sessionError || !sessionData.session?.user) {
+    result.textContent = "Your session has expired. Please log in again.";
     return;
+  }
+
+  currentUser = sessionData.session.user;
   }
 
   button.disabled = true;
