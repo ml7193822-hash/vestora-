@@ -602,7 +602,9 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
 
   
 <button class="secondary" type="button"
-  onclick="
+  onclick="showAuthForm('login')">
+  Login
+</button>
     document.getElementById('registerForm').hidden = true;
     document.getElementById('loginForm').hidden = false;
     document.getElementById('authMessage').textContent = 'Enter your login details.';
@@ -1276,7 +1278,7 @@ async function loginUser() {
 
   try {
     setBusy(true);
-    showAuthMessage(Securing your VESTORA account...);
+    showAuthMessage("Securing your VESTORA account...");
 
     const { data, error } =
       await supabaseClient.auth.signInWithPassword({
