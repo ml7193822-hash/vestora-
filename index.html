@@ -1176,6 +1176,24 @@ function setSignedIn(user) {
     await loadReferralCommissions();
   })();
 }
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (
+    event === "INITIAL_SESSION" ||
+    event === "SIGNED_IN" ||
+    event === "USER_UPDATED" ||
+    event === "TOKEN_REFRESHED"
+  ) {
+    if (session?.user) {
+      currentUser = session.user;
+      authSection.hidden = true;
+      appView.hidden = false;
+    }
+  }
+
+  if (event === "SIGNED_OUT") {
+    setSignedIn(null);
+  }
+});
 
 async function registerUser(event) {
   event.preventDefault();
