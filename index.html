@@ -3374,6 +3374,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
   
 supabaseClient.auth.onAuthStateChange((event, session) => {
+  alert("VESTORA AUTH LISTENER STARTED");
 
   if (event === "INITIAL_SESSION" ||
       event === "SIGNED_IN" ||
