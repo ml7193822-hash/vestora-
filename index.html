@@ -3358,11 +3358,26 @@ function closeVestoraWelcome() {
 }
   
 supabaseClient.auth.onAuthStateChange((event, session) => {
-  if (session && session.user) {
-    setSignedIn(session.user);
-  } else {
-    setSignedIn(null);
+
+  if (event === "INITIAL_SESSION" ||
+      event === "SIGNED_IN" ||
+      event === "USER_UPDATED") {
+
+    Promise.resolve().then(() => {
+      setSignedIn(session?.user || null);
+    });
+
+  } else if (event === "SIGNED_OUT") {
+
+    Promise.resolve().then(() => {
+      setSignedIn(null);
+    });
+
+  } else if (event === "TOKEN_REFRESHED" && session?.user) {
+
+    currentUser = session.user;
   }
+
 });
 
 window.loginUser = loginUser;
