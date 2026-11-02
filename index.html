@@ -2830,60 +2830,26 @@ if (registerForm) {
   registerForm.addEventListener("submit", registerUser);
 }
 
-document.getElementById("redeemForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
-  alert("Redeem button is working!");
 
-  const input = document.getElementById("redeemInput");
-  const result = document.getElementById("redeemResult");
-  const button = this.querySelector('button[type="submit"]');
-  const code = input.value.trim().toUpperCase();
+window.addEventListener("load", function () {
+  const redeemForm = document.getElementById("redeemForm");
 
-  if (!code) {
-    result.textContent = "Please enter a code.";
+  if (!redeemForm) {
+    console.error("Redeem form not found!");
     return;
   }
 
-  button.disabled = true;
-  result.textContent = "Checking redeem code...";
+  redeemForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-  try {
-    const { data: sessionData, error: sessionError } =
-      await supabaseClient.auth.getSession();
+    alert("Redeem button is working!");
 
-    if (sessionError) throw sessionError;
+    const input = document.getElementById("redeemInput");
+    const result = document.getElementById("redeemResult");
 
-    if (!sessionData.session?.user) {
-      result.textContent = "Please log in before redeeming a code.";
-      return;
-    }
-
-    currentUser = sessionData.session.user;
-
-    const { data, error } = await supabaseClient.rpc(
-      "redeem_vestora_code",
-      { p_code: code }
-    );
-
-    if (error) throw error;
-
-    result.textContent =
-      "Success! UGX " +
-      Number(data.amount).toLocaleString("en-UG") +
-      " has been added to your balance.";
-
-    input.value = "";
-
-    await loadProfile();
-
-  } catch (error) {
-    result.textContent = error.message || "Could not redeem this code.";
-  } finally {
-    button.disabled = false;
-  }
+    result.textContent = "Checking redeem code...";
+  });
 });
-
-
 
 async function loadProfile() {
   if (!currentUser) return;
