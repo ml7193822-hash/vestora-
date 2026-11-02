@@ -1146,8 +1146,11 @@ async function registerUser(event) {
     if (error) throw error;
 
     if (data.session && data.user) {
-      setSignedIn(data.user);
-      showAuthMessage("Account created successfully. You are now logged in.");
+  setSignedIn(data.user);
+  showAuthMessage("Account created successfully. You are now logged in.");
+
+  showVestoraWelcome();
+  }
     } else {
       showAuthMessage("Account created. Check your email and confirm your account before logging in. Your referral can be recorded after you log in if the referral ID is still available in this browser.");
     }
@@ -1194,7 +1197,9 @@ async function loginUser() {
     if (error) throw error;
 
     setSignedIn(data.user);
-    showAuthMessage("Login successful.");
+showAuthMessage("Login successful.");
+
+showVestoraWelcome();
 
   } catch (error) {
     showAuthMessage("Login failed: " + error.message, true);
@@ -3249,6 +3254,15 @@ checkLoginSession();
     listElement.textContent = "Could not load commissions.";
   }
   }
+  function showVestoraWelcome() {
+  const modal = document.getElementById("vestoraWelcomeModal");
+  if (modal) modal.classList.add("active");
+}
+
+function closeVestoraWelcome() {
+  const modal = document.getElementById("vestoraWelcomeModal");
+  if (modal) modal.classList.remove("active");
+}
 </script>
   <!-- VESTORA Purchase Confirmation -->
 <div id="purchaseModal" class="purchase-modal">
@@ -3580,8 +3594,154 @@ checkLoginSession();
   .vestora-rewards { padding: 15px; }
   .reward-grid { grid-template-columns: 1fr; }
 }
+  .vestora-welcome-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(3, 10, 20, .88);
+  backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.vestora-welcome-overlay.active {
+  display: flex;
+}
+
+.vestora-welcome-card {
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: linear-gradient(145deg,#101827,#1d2b39);
+  border: 1px solid #b9954c;
+  border-radius: 22px;
+  padding: 27px 22px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 15px 50px rgba(0,0,0,.5);
+}
+
+.vestora-logo {
+  width: 55px;
+  height: 55px;
+  margin: auto;
+  display: grid;
+  place-items: center;
+  background: #d5ad55;
+  color: #101827;
+  border-radius: 15px;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.vestora-welcome-card h2 {
+  color: #e6c477;
+  font-size: 23px;
+  margin: 17px 0 5px;
+}
+
+.vestora-tagline {
+  color: #e6c477;
+  font-weight: 800;
+  font-size: 11px;
+}
+
+.vestora-welcome-card p {
+  color: #d1d5db;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.vestora-welcome-card h3 {
+  font-size: 17px;
+}
+
+.vestora-gold {
+  color: #e6c477;
+}
+
+.vestora-whatsapp {
+  background: #1d2b39;
+  border-radius: 15px;
+  padding: 17px;
+  margin: 20px 0;
+}
+
+.vestora-whatsapp h3 {
+  color: white;
+}
+
+.vestora-whatsapp a {
+  display: block;
+  background: #25d366;
+  color: #082b19;
+  text-decoration: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 900;
+  font-size: 13px;
+  margin-top: 15px;
+}
+
+.vestora-welcome-card > button {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #d5ad55;
+  border-radius: 10px;
+  background: transparent;
+  color: #e6c477;
+  font-weight: 800;
+  }
 
   </style>
+  <div id="vestoraWelcomeModal" class="vestora-welcome-overlay">
+  <div class="vestora-welcome-card">
+
+    <div class="vestora-logo">V</div>
+
+    <h2>WELCOME TO VESTORA</h2>
+    <p class="vestora-tagline">
+      INVEST TODAY • GROW TOMORROW
+    </p>
+
+    <h3>Your journey starts here.</h3>
+
+    <p>
+      Vestora is a digital platform designed to create
+      opportunities through investment packages,
+      referral rewards, and exciting challenges.
+    </p>
+
+    <p>
+      Join us, explore opportunities, and take a
+      step towards your financial goals.
+    </p>
+
+    <h3 class="vestora-gold">
+      Your Growth, Your Future.
+    </h3>
+
+    <div class="vestora-whatsapp">
+      <h3>JOIN OUR COMMUNITY</h3>
+      <p>Get updates, announcements and support.</p>
+
+      <a
+        href="https://chat.whatsapp.com/Lc39iTClBnJJHY2vWstUqE?s=cl&p=a&mlu=4&ilr=4&iam=2"
+        target="_blank"
+        rel="noopener noreferrer">
+        JOIN WHATSAPP GROUP
+      </a>
+    </div>
+
+    <button onclick="closeVestoraWelcome()">
+      CONTINUE TO DASHBOARD
+    </button>
+
+  </div>
+  </div>
 </body>
 </html>
 
