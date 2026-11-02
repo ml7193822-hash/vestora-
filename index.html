@@ -1083,7 +1083,17 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
   
 const SUPABASE_URL = "https://vmcfdsezeztihltcioun.supabase.co";
 const SUPABASE_KEY = "sb_publishable_7oD4jRpbJcpQfUyQ8kC6Iw_MjkcUrhi";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
 
 const authSection = document.getElementById("authSection");
 const appView = document.getElementById("appView");
