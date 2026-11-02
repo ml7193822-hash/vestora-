@@ -2841,22 +2841,52 @@ if (registerForm) {
 
 document.addEventListener("DOMContentLoaded", function () {
   const redeemForm = document.getElementById("redeemForm");
-  alert("Redeem section reached!");
 
-  if (!redeemForm) {
-    console.error("Redeem form not found!");
-    return;
-  }
+  if (!redeemForm) return;
 
   redeemForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    alert("Redeem button is working!");
-
     const input = document.getElementById("redeemInput");
     const result = document.getElementById("redeemResult");
+    const button = redeemForm.querySelector('button[type="submit"]');
+    const code = input.value.trim().toUpperCase();
 
+    button.disabled = true;
     result.textContent = "Checking redeem code...";
+
+    try {
+      const { data: sessionData, error: sessionError } =
+        await supabaseClient.auth.getSession();
+
+      if (sessionError) throw sessionError;
+
+      if (!sessionData.session?.user) {
+        throw new Error("Please log in before redeeming a code.");
+      }
+
+      currentUser = sessionData.session.user;
+
+      const { data, error } = await supabaseClient.rpc(
+        "redeem_vestora_code",
+        { p_code: code }
+      );
+
+      if (error) throw error;
+
+      result.textContent = data.message ||
+        "Success! UGX " + Number(data.amount).toLocaleString("en-UG") +
+        " has been added to your balance.";
+
+      input.value = "";
+
+      await loadProfile();
+
+    } catch (error) {
+      result.textContent = error.message || "Could not redeem this code.";
+    } finally {
+      button.disabled = false;
+    }
   });
 });
 
