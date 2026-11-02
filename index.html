@@ -1177,22 +1177,25 @@ function setSignedIn(user) {
   })();
 }
   supabaseClient.auth.onAuthStateChange((event, session) => {
+
   if (
     event === "INITIAL_SESSION" ||
     event === "SIGNED_IN" ||
-    event === "USER_UPDATED" ||
-    event === "TOKEN_REFRESHED"
+    event === "USER_UPDATED"
   ) {
-    if (session?.user) {
-      currentUser = session.user;
-      authSection.hidden = true;
-      appView.hidden = false;
-    }
+    Promise.resolve().then(() => {
+      setSignedIn(session?.user || null);
+    });
+
+  } else if (event === "SIGNED_OUT") {
+    Promise.resolve().then(() => {
+      setSignedIn(null);
+    });
+
+  } else if (event === "TOKEN_REFRESHED" && session?.user) {
+    currentUser = session.user;
   }
 
-  if (event === "SIGNED_OUT") {
-    setSignedIn(null);
-  }
 });
 
 async function registerUser(event) {
