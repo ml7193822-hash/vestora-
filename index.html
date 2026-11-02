@@ -2825,9 +2825,6 @@ document.getElementById("registerForm").addEventListener("submit", registerUser)
 
 document.getElementById("redeemForm").addEventListener("submit", async function(event) {
   event.preventDefault();
-  document.getElementById("redeemResult").textContent =
-  "VESTORA redeem button detected.";
-  
 
   const input = document.getElementById("redeemInput");
   const result = document.getElementById("redeemResult");
@@ -2839,22 +2836,22 @@ document.getElementById("redeemForm").addEventListener("submit", async function(
     return;
   }
 
-  if (!currentUser) {
-  const { data: sessionData, error: sessionError } =
-    await supabaseClient.auth.getSession();
-
-  if (sessionError || !sessionData.session?.user) {
-  result.textContent = "NO ACTIVE SESSION FOUND";
-  return;
-  }
-
-  currentUser = sessionData.session.user;
-  }
-
   button.disabled = true;
   result.textContent = "Checking redeem code...";
 
   try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    if (!sessionData.session?.user) {
+      result.textContent = "Please log in before redeeming a code.";
+      return;
+    }
+
+    currentUser = sessionData.session.user;
+
     const { data, error } = await supabaseClient.rpc(
       "redeem_vestora_code",
       { p_code: code }
@@ -2864,14 +2861,13 @@ document.getElementById("redeemForm").addEventListener("submit", async function(
 
     result.textContent =
       "Success! UGX " +
-      Number(data.amount).toLocaleString() +
+      Number(data.amount).toLocaleString("en-UG") +
       " has been added to your balance.";
 
     input.value = "";
 
-    if (typeof loadProfile === "function") {
-      await loadProfile();
-    }
+    await loadProfile();
+
   } catch (error) {
     result.textContent = error.message || "Could not redeem this code.";
   } finally {
