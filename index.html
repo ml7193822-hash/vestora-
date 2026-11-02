@@ -2824,7 +2824,11 @@ document.getElementById("cancelPurchaseButton")
   });
   
 
-document.getElementById("registerForm").addEventListener("submit", registerUser);
+const registerForm = document.getElementById("registerForm");
+
+if (registerForm) {
+  registerForm.addEventListener("submit", registerUser);
+}
 
 document.getElementById("redeemForm").addEventListener("submit", async function(event) {
   event.preventDefault();
