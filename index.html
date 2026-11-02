@@ -558,6 +558,22 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
     margin-right: 1%;
   }
 }
+    
+/* VESTORA LOGIN FORM FIX */
+#authSection form[hidden] {
+  display: none !important;
+}
+
+#authSection form:not([hidden]) {
+  display: block !important;
+}
+
+#authSection form input {
+  display: block !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 
 </style>
 </head>
