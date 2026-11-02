@@ -1181,29 +1181,43 @@ async function registerUser(event) {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  if (!fullName) return showAuthMessage("Please enter your full name.", true);
-  if (password.length < 6) return showAuthMessage("Your password must contain at least 6 characters.", true);
+  if (!fullName) {
+    return showAuthMessage("Please enter your full name.", true);
+  }
+
+  if (password.length < 6) {
+    return showAuthMessage(
+      "Your password must contain at least 6 characters.", true
+    );
+  }
 
   setBusy(true);
   showAuthMessage("Creating your account...");
 
   try {
     const { data, error } = await supabaseClient.auth.signUp({
-      email, password, options: { data: { full_name: fullName } }
+      email,
+      password,
+      options: {
+        data: { full_name: fullName }
+      }
     });
+
     if (error) throw error;
 
     if (data.session && data.user) {
-  setSignedIn(data.user);
-  showAuthMessage("Account created successfully. You are now logged in.");
-
-  showVestoraWelcome();
-  }
+      setSignedIn(data.user);
+      showAuthMessage("Account created successfully. You are now logged in.");
+      showVestoraWelcome();
     } else {
-      showAuthMessage("Account created. Check your email and confirm your account before logging in. Your referral can be recorded after you log in if the referral ID is still available in this browser.");
+      showAuthMessage(
+        "Account created. Check your email and confirm your account before logging in. Your referral can be recorded after you log in if the referral ID is still available in this browser."
+      );
     }
+
   } catch (error) {
     showAuthMessage("Registration failed: " + error.message, true);
+
   } finally {
     setBusy(false);
   }
