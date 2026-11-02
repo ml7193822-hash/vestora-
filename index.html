@@ -2825,6 +2825,8 @@ document.getElementById("registerForm").addEventListener("submit", registerUser)
 
 document.getElementById("redeemForm").addEventListener("submit", async function(event) {
   event.preventDefault();
+  document.getElementById("redeemResult").textContent =
+  "VESTORA redeem button detected.";
   
 
   const input = document.getElementById("redeemInput");
