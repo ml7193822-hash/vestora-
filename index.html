@@ -3211,9 +3211,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
   }
 });
 
-document.getElementById("loginButton")?.addEventListener("click", loginUser);
-document.getElementById("registerButton")?.addEventListener("click", registerUser);
-document.getElementById("resetButton")?.addEventListener("click", resetPassword);
+
 
 checkLoginSession();
   window.loginUser = loginUser;
@@ -3293,13 +3291,14 @@ function closeVestoraWelcome() {
       Please confirm that you want to proceed.
     </p>
 
-    <button id="confirmPurchaseButton"
-      class="purchase-confirm-button"
-      type="button">
-      onclick="confirmVestoraPurchase()"
-      Confirm Purchase
-    </button>
-
+    
+<button
+  id="confirmPurchaseButton"
+  class="purchase-confirm-button"
+  type="button"
+  onclick="confirmVestoraPurchase()">
+  Confirm Purchase
+</button>
     <button id="cancelPurchaseButton"
   class="purchase-cancel-button"
   type="button"
