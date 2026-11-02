@@ -3282,45 +3282,33 @@ async function recordReferralIfNeeded() {
   }
 })();
 
-let sessionReady = false;
 
-async function checkLoginSession() {
-  try {
-    const { data, error } = await supabaseClient.auth.getSession();
 
-    if (error) throw error;
 
-    if (data.session?.user) {
-      setSignedIn(data.session.user);
-    } else {
-      setSignedIn(null);
-      showAuthMessage("Please create an account or log in.");
-    }
-
-  } catch (error) {
-    console.error("Session restoration error:", error);
-    setSignedIn(null);
-    showAuthMessage("Could not restore your session. Please log in again.", true);
-
-  } finally {
-    sessionReady = true;
-  }
-}
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
-  if (!sessionReady) return;
 
-  if (event === "SIGNED_IN" && session?.user) {
-    setSignedIn(session.user);
+  if (
+    event === "INITIAL_SESSION" ||
+    event === "SIGNED_IN" ||
+    event === "USER_UPDATED"
+  ) {
+    Promise.resolve().then(() => {
+      setSignedIn(session?.user || null);
+    });
+
   } else if (event === "SIGNED_OUT") {
-    setSignedIn(null);
+    Promise.resolve().then(() => {
+      setSignedIn(null);
+    });
+
   } else if (event === "TOKEN_REFRESHED" && session?.user) {
     currentUser = session.user;
   }
+
 });
 
 
-checkLoginSession();
   window.loginUser = loginUser;
   async function loadReferralCommissions() {
   const totalElement = document.getElementById("referralCommissionTotal");
