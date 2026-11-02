@@ -2830,22 +2830,16 @@ if (cancelButton) {
   });
 }
 
-document.getElementById("cancelPurchaseButton")
-  .addEventListener("click", function () {
-    document.getElementById("purchaseModal").classList.remove("active");
-    selectedPurchasePlan = null;
-  });
-  
+
 
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
   registerForm.addEventListener("submit", registerUser);
 }
-  alert("Reached redeem listener code!");
+  console.log("Reached redeem listener code!");
 
-
-window.addEventListener("load", function () {
+document.addEventListener("DOMContentLoaded", function () {
   const redeemForm = document.getElementById("redeemForm");
   alert("Redeem section reached!");
 
