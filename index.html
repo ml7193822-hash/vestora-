@@ -1184,26 +1184,27 @@ async function registerUser(event) {
   document.getElementById("registerForm")
   .addEventListener("submit", registerUser);
   
+
 function showAuthForm(type) {
   const registerForm = document.getElementById("registerForm");
   const loginForm = document.getElementById("loginForm");
   const authMessage = document.getElementById("authMessage");
 
-  if (!registerForm || !loginForm || !authMessage) {
-    console.error("VESTORA: Authentication elements not found.");
-    return;
+  if (type === "login") {
+    loginForm.hidden = false;
+    registerForm.hidden = true;
+  } else {
+    registerForm.hidden = false;
+    loginForm.hidden = true;
   }
 
-  registerForm.hidden = type !== "register";
-  loginForm.hidden = type !== "login";
-
-  authMessage.textContent =
-    type === "register"
-      ? "Create your VESTORA account."
-      : "Enter your login details.";
+  authMessage.textContent = type === "login"
+    ? "Enter your login details."
+    : "Create your VESTORA account.";
 }
 
 window.showAuthForm = showAuthForm;
+
 
 
 async function loginUser() {
