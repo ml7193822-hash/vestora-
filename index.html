@@ -1276,7 +1276,7 @@ async function loginUser() {
 
   try {
     setBusy(true);
-    showAuthMessage("Connecting to Supabase...");
+    showAuthMessage(Securing your VESTORA account...);
 
     const { data, error } =
       await supabaseClient.auth.signInWithPassword({
