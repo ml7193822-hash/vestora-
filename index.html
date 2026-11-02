@@ -2814,8 +2814,8 @@ document.getElementById("redeemForm").addEventListener("submit", async function(
     await supabaseClient.auth.getSession();
 
   if (sessionError || !sessionData.session?.user) {
-    result.textContent = "Your session has expired. Please log in again.";
-    return;
+  result.textContent = "NO ACTIVE SESSION FOUND";
+  return;
   }
 
   currentUser = sessionData.session.user;
