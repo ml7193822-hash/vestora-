@@ -1334,6 +1334,21 @@ function toggleMenu() {
 
 
 async function go(section) {
+
+  // Restore the saved login session before checking access.
+  if (!currentUser) {
+    try {
+      const { data, error } =
+        await supabaseClient.auth.getSession();
+
+      if (!error && data.session?.user) {
+        currentUser = data.session.user;
+      }
+    } catch (error) {
+      console.error("Session check failed:", error);
+    }
+  }
+
   if (!currentUser) {
     authSection.hidden = false;
     appView.hidden = true;
@@ -3368,7 +3383,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
   
 supabaseClient.auth.onAuthStateChange((event, session) => {
-  alert("VESTORA AUTH LISTENER STARTED");
+  
 
   if (event === "INITIAL_SESSION" ||
       event === "SIGNED_IN" ||
@@ -3394,7 +3409,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 window.loginUser = loginUser;
 window.showAuthForm = showAuthForm;
 window.registerUser = registerUser;
-  alert("VESTORA UPDATED SCRIPT IS RUNNING");
+  
 
 </script>
   <!-- VESTORA Purchase Confirmation -->
