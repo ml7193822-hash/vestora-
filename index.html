@@ -600,10 +600,17 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
     Register
   </button>
 
-  <button class="secondary" type="button"
-    onclick="alert('VESTORA LOGIN BUTTON WORKS'); showAuthForm('login')">
-    Login
-  </button>
+  
+<button class="secondary" type="button"
+  onclick="
+    document.getElementById('registerForm').hidden = true;
+    document.getElementById('loginForm').hidden = false;
+    document.getElementById('authMessage').textContent = 'Enter your login details.';
+    document.getElementById('authMessage').style.display = 'block';
+  ">
+  Login
+</button>
+
 </div>
 
 
