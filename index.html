@@ -665,15 +665,10 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
     </div>
 
     
-<button class="primary" id="loginButton" type="button">
+<button class="primary" id="loginButton" type="button"
+  onclick="loginUser()">
   Login
 </button>
-
-<script>
-document.getElementById("loginButton").addEventListener("click", function() {
-  loginUser();
-});
-</script>
 
 
     <button class="secondary" id="resetButton" type="button"
@@ -1276,9 +1271,7 @@ showVestoraWelcome();
   }
 }
   window.loginUser = loginUser;
-  document.getElementById("loginButton").addEventListener("click", function () {
-  loginUser();
-});
+  
 
 async function resetPassword() {
   const email = document.getElementById("email").value.trim();
