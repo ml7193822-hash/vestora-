@@ -3272,24 +3272,34 @@ async function recordReferralIfNeeded() {
   }
 })();
 
+let sessionReady = false;
+
 async function checkLoginSession() {
-  showAuthMessage("Checking your account...");
   try {
     const { data, error } = await supabaseClient.auth.getSession();
+
     if (error) throw error;
+
     if (data.session?.user) {
       setSignedIn(data.session.user);
     } else {
       setSignedIn(null);
       showAuthMessage("Please create an account or log in.");
     }
+
   } catch (error) {
+    console.error("Session restoration error:", error);
     setSignedIn(null);
-    showAuthMessage("Could not check your login: " + error.message, true);
+    showAuthMessage("Could not restore your session. Please log in again.", true);
+
+  } finally {
+    sessionReady = true;
   }
 }
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (!sessionReady) return;
+
   if (event === "SIGNED_IN" && session?.user) {
     setSignedIn(session.user);
   } else if (event === "SIGNED_OUT") {
@@ -3298,7 +3308,6 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     currentUser = session.user;
   }
 });
-
 
 
 checkLoginSession();
