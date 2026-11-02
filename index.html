@@ -1276,6 +1276,9 @@ showVestoraWelcome();
   }
 }
   window.loginUser = loginUser;
+  document.getElementById("loginButton").addEventListener("click", function () {
+  loginUser();
+});
 
 async function resetPassword() {
   const email = document.getElementById("email").value.trim();
