@@ -595,26 +595,18 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
 
   
 <div class="auth-buttons">
+
   <button class="primary" type="button"
     onclick="showAuthForm('register')">
     Register
   </button>
 
-  
-<button class="secondary" type="button"
-  onclick="showAuthForm('login')">
-  Login
-</button>
-    document.getElementById('registerForm').hidden = true;
-    document.getElementById('loginForm').hidden = false;
-    document.getElementById('authMessage').textContent = 'Enter your login details.';
-    document.getElementById('authMessage').style.display = 'block';
-  ">
-  Login
-</button>
+  <button class="secondary" type="button"
+    onclick="showAuthForm('login')">
+    Login
+  </button>
 
 </div>
-
 
   <form id="registerForm" hidden>
     <h3>Create Your Account</h3>
