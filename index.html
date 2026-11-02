@@ -2815,8 +2815,20 @@ async function confirmVestoraPurchase() {
   selectedPurchasePlan = null;
   }
 
-document.getElementById("confirmPurchaseButton")
-  .addEventListener("click", confirmVestoraPurchase);
+const confirmButton = document.getElementById("confirmPurchaseButton");
+
+if (confirmButton) {
+  confirmButton.addEventListener("click", confirmVestoraPurchase);
+}
+
+const cancelButton = document.getElementById("cancelPurchaseButton");
+
+if (cancelButton) {
+  cancelButton.addEventListener("click", function () {
+    document.getElementById("purchaseModal").classList.remove("active");
+    selectedPurchasePlan = null;
+  });
+}
 
 document.getElementById("cancelPurchaseButton")
   .addEventListener("click", function () {
