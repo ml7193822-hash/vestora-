@@ -3367,11 +3367,11 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
   const modal = document.getElementById("vestoraWelcomeModal");
   if (modal) modal.classList.add("active");
 }
-
-function closeVestoraWelcome() {
+  function closeVestoraWelcome() {
   const modal = document.getElementById("vestoraWelcomeModal");
   if (modal) modal.classList.remove("active");
-}
+  }
+
   
 supabaseClient.auth.onAuthStateChange((event, session) => {
 
