@@ -3288,6 +3288,14 @@ async function recordReferralIfNeeded() {
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
 
+  if (event === "INITIAL_SESSION") {
+    alert(
+      session?.user
+        ? "VESTORA: Saved login session found."
+        : "VESTORA: No saved login session found."
+    );
+  }
+
   if (
     event === "INITIAL_SESSION" ||
     event === "SIGNED_IN" ||
