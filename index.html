@@ -577,13 +577,19 @@ header{min-height:68px;padding:8px 10px}.app{min-height:calc(100vh - 68px)}
   <h2>🌿 VESTORA Account</h2>
   <p>Welcome! Choose how you want to continue.</p>
 
-  <div class="auth-buttons">
-    <button class="primary" type="button"
-      onclick="showAuthForm('register')">Register</button>
+  
+<div class="auth-buttons">
+  <button class="primary" type="button"
+    onclick="showAuthForm('register')">
+    Register
+  </button>
 
-    <button class="secondary" type="button"
-      onclick="showAuthForm('login')">Login</button>
-  </div>
+  <button class="secondary" type="button"
+    onclick="alert('VESTORA LOGIN BUTTON WORKS'); showAuthForm('login')">
+    Login
+  </button>
+</div>
+
 
   <form id="registerForm" hidden>
     <h3>Create Your Account</h3>
