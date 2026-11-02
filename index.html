@@ -1083,13 +1083,28 @@ function copyDepositNumber(number) {
 
 
 
+
 function setBusy(value) {
   busy = value;
-  document.getElementById("registerButton").disabled = value;
-  document.getElementById("loginButton").disabled = value;
-  document.getElementById("resetButton").disabled = value;
-  document.getElementById("registerButton").textContent = value ? "Please wait..." : "Create Account";
+
+  const registerButton = document.getElementById("registerButton");
+  const loginButton = document.getElementById("loginButton");
+  const resetButton = document.getElementById("resetButton");
+
+  if (registerButton) {
+    registerButton.disabled = value;
+  }
+
+  if (loginButton) {
+    loginButton.disabled = value;
+    loginButton.textContent = value ? "Logging in..." : "Login";
+  }
+
+  if (resetButton) {
+    resetButton.disabled = value;
+  }
 }
+
 
 function setSignedIn(user) {
   currentUser = user || null;
@@ -1221,6 +1236,7 @@ showVestoraWelcome();
     setBusy(false);
   }
 }
+  window.loginUser = loginUser;
 
 async function resetPassword() {
   const email = document.getElementById("email").value.trim();
@@ -3274,6 +3290,19 @@ function closeVestoraWelcome() {
   const modal = document.getElementById("vestoraWelcomeModal");
   if (modal) modal.classList.remove("active");
 }
+  
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (session && session.user) {
+    setSignedIn(session.user);
+  } else {
+    setSignedIn(null);
+  }
+});
+
+window.loginUser = loginUser;
+window.showAuthForm = showAuthForm;
+window.registerUser = registerUser;
+
 </script>
   <!-- VESTORA Purchase Confirmation -->
 <div id="purchaseModal" class="purchase-modal">
