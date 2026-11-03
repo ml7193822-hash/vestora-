@@ -3329,18 +3329,7 @@ async function recordReferralIfNeeded() {
 })();
 
 
-
-
-
 supabaseClient.auth.onAuthStateChange((event, session) => {
-
-  if (event === "INITIAL_SESSION") {
-    alert(
-      session?.user
-        
-        : "VESTORA: No saved login session found."
-    );
-  }
 
   if (
     event === "INITIAL_SESSION" ||
@@ -3361,7 +3350,6 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
   }
 
 });
-
 
   window.loginUser = loginUser;
   async function loadReferralCommissions() {
