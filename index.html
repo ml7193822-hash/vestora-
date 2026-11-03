@@ -3446,6 +3446,52 @@ async function loadVestoraRewardProgress() {
     console.error("Could not load reward progress.");
   }
 }
+  
+async function claimVestoraReward(rewardCode) {
+  if (!currentUser) {
+    alert("Please log in first.");
+    return;
+  }
+
+  const buttonId = rewardCode === "REGISTRATION"
+    ? "claimRegistration"
+    : `claim${rewardCode}`;
+
+  const button = document.getElementById(buttonId);
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Processing...";
+  }
+
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "claim_vestora_reward",
+      { p_reward_code: rewardCode }
+    );
+
+    if (error) throw error;
+
+    if (data.success) {
+      alert(
+        data.message + "\nReward: UGX " +
+        Number(data.amount).toLocaleString()
+      );
+    } else {
+      alert(data.message);
+    }
+
+    await loadVestoraRewardProgress();
+
+  } catch (error) {
+    console.error("Reward claim error:", error);
+    alert("Could not claim reward. Please try again.");
+    await loadVestoraRewardProgress();
+  }
+}
+
+window.claimVestoraReward = claimVestoraReward;
+
 
   function showVestoraWelcome() {
   const modal = document.getElementById("vestoraWelcomeModal");
