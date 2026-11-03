@@ -3329,6 +3329,7 @@ async function recordReferralIfNeeded() {
 })();
 
 
+
 supabaseClient.auth.onAuthStateChange((event, session) => {
 
   if (
@@ -3336,12 +3337,18 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     event === "SIGNED_IN" ||
     event === "USER_UPDATED"
   ) {
-    Promise.resolve().then(() => {
+    Promise.resolve().then(async () => {
       setSignedIn(session?.user || null);
+
+      if (session?.user) {
+        currentUser = session.user;
+        await loadVestoraRewardProgress();
+      }
     });
 
   } else if (event === "SIGNED_OUT") {
     Promise.resolve().then(() => {
+      currentUser = null;
       setSignedIn(null);
     });
 
@@ -3351,7 +3358,9 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
 });
 
+
   window.loginUser = loginUser;
+  
   async function loadReferralCommissions() {
   const totalElement = document.getElementById("referralCommissionTotal");
   const listElement = document.getElementById("referralCommissionsList");
@@ -3389,14 +3398,60 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     listElement.textContent = "Could not load commissions.";
   }
   }
+  
+async function loadVestoraRewardProgress() {
+  if (!currentUser) return;
+
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "get_vestora_reward_progress"
+    );
+
+    if (error) throw error;
+
+    const rewards = [
+      { key: "registration", id: "registrationProgress", target: 10, claimed: "registration_claimed" },
+      { key: "v1", id: "v1Progress", target: 3, claimed: "v1_claimed" },
+      { key: "v2", id: "v2Progress", target: 7, claimed: "v2_claimed" },
+      { key: "v3", id: "v3Progress", target: 3, claimed: "v3_claimed" }
+    ];
+
+    rewards.forEach(reward => {
+      const element = document.getElementById(reward.id);
+      if (!element) return;
+
+      const progress = Number(data[reward.key] || 0);
+      element.textContent = `${progress} / ${reward.target}`;
+
+      const buttonId = reward.key === "registration"
+        ? "claimRegistration"
+        : `claim${reward.key.toUpperCase()}`;
+
+      const button = document.getElementById(buttonId);
+
+      if (button) {
+        button.disabled =
+          progress < reward.target || data[reward.claimed];
+
+        button.textContent = data[reward.claimed]
+          ? "Already Claimed"
+          : progress >= reward.target
+            ? "Unlock Reward"
+            : "Not Yet Unlocked";
+      }
+    });
+
+  } catch (error) {
+    console.error("Reward progress error:", error);
+    console.error("Could not load reward progress.");
+  }
+}
+
   function showVestoraWelcome() {
   const modal = document.getElementById("vestoraWelcomeModal");
   if (modal) modal.classList.add("active");
 }
-  function closeVestoraWelcome() {
-  const modal = document.getElementById("vestoraWelcomeModal");
-  if (modal) modal.classList.remove("active");
-  }
+
 
   
 supabaseClient.auth.onAuthStateChange((event, session) => {
